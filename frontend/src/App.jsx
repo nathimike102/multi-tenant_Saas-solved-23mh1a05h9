@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import ProjectsPage from './pages/ProjectsPage.jsx';
+import ProjectDetailsPage from './pages/ProjectDetailsPage.jsx';
 import ProtectedRoute from './auth/ProtectedRoute.jsx';
 import Layout from './components/Layout.jsx';
 
@@ -14,7 +16,9 @@ export default function App() {
       <Route element={<ProtectedRoute />}> 
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          {/* Future: projects, tasks, users, tenants routes */}
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:projectId" element={<ProjectDetailsPage />} />
+          {/* Future: tasks, users, tenants routes */}
         </Route>
       </Route>
 
