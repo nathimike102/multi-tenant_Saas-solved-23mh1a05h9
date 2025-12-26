@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 
@@ -5,24 +6,17 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Starting database seed...');
-
-  // Clear existing data (in reverse order of dependencies)
   await prisma.auditLog.deleteMany();
   await prisma.task.deleteMany();
   await prisma.project.deleteMany();
   await prisma.user.deleteMany();
   await prisma.tenant.deleteMany();
-
   console.log('Cleared existing data');
 
-  // Hash passwords
   const superAdminPassword = await bcrypt.hash('Admin@123', 10);
   const demoAdminPassword = await bcrypt.hash('Demo@123', 10);
   const userPassword = await bcrypt.hash('User@123', 10);
 
-  // ============================================
-  // 1. CREATE SUPER ADMIN ACCOUNT
-  // ============================================
   const superAdmin = await prisma.user.create({
     data: {
       email: 'superadmin@system.com',
@@ -30,14 +24,11 @@ async function main() {
       fullName: 'Super Administrator',
       role: 'super_admin',
       isActive: true,
-      tenantId: null, // Not associated with any tenant
+      tenantId: null, 
     },
   });
   console.log('✓ Created Super Admin account');
 
-  // ============================================
-  // 2. CREATE SAMPLE TENANT (Demo Company)
-  // ============================================
   const demoTenant = await prisma.tenant.create({
     data: {
       name: 'Demo Company',
@@ -50,9 +41,6 @@ async function main() {
   });
   console.log('✓ Created Demo Company tenant');
 
-  // ============================================
-  // 3. CREATE TENANT ADMIN FOR DEMO COMPANY
-  // ============================================
   const demoAdmin = await prisma.user.create({
     data: {
       tenantId: demoTenant.id,
@@ -65,9 +53,6 @@ async function main() {
   });
   console.log('✓ Created Tenant Admin for Demo Company');
 
-  // ============================================
-  // 4. CREATE 2 REGULAR USERS FOR DEMO COMPANY
-  // ============================================
   const user1 = await prisma.user.create({
     data: {
       tenantId: demoTenant.id,
@@ -91,9 +76,6 @@ async function main() {
   });
   console.log('✓ Created 2 regular users for Demo Company');
 
-  // ============================================
-  // 5. CREATE 2 SAMPLE PROJECTS
-  // ============================================
   const project1 = await prisma.project.create({
     data: {
       tenantId: demoTenant.id,
@@ -115,9 +97,6 @@ async function main() {
   });
   console.log('✓ Created 2 sample projects');
 
-  // ============================================
-  // 6. CREATE 5 SAMPLE TASKS
-  // ============================================
   await prisma.task.createMany({
     data: [
       {
@@ -167,16 +146,13 @@ async function main() {
         description: 'Implement push notification system for both iOS and Android',
         status: 'todo',
         priority: 'low',
-        assignedTo: null, // Unassigned
+        assignedTo: null, 
         dueDate: new Date('2025-02-01'),
       },
     ],
   });
   console.log('✓ Created 5 sample tasks');
 
-  // ============================================
-  // 7. CREATE AUDIT LOG ENTRIES
-  // ============================================
   await prisma.auditLog.createMany({
     data: [
       {
