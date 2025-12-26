@@ -4,7 +4,7 @@ A comprehensive multi-tenant SaaS application for managing organizations, users,
 
 ## 🎯 Project Description
 
-Partnr is a modern SaaS platform designed to enable organizations to manage their operations across multiple teams and projects. It provides a complete multi-tenancy solution with isolated data, role-based access control, and comprehensive project and task management capabilities.
+A modern SaaS platform designed to enable organizations to manage their operations across multiple teams and projects. It provides a complete multi-tenancy solution with isolated data, role-based access control, and comprehensive project and task management capabilities.
 
 **Target Audience:** Enterprise organizations and businesses requiring multi-tenant, scalable project management solutions.
 
@@ -24,6 +24,7 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
 ## 🏗️ Technology Stack
 
 ### Frontend
+
 - **React** 18.2+ - UI library
 - **React Router** 6.22+ - Client-side routing
 - **Vite** 5.0+ - Build tool and dev server
@@ -32,6 +33,7 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
 - **Zod** - TypeScript-first schema validation
 
 ### Backend
+
 - **Node.js** 18+ - JavaScript runtime
 - **Express** 4.18+ - Web framework
 - **Prisma** 5.22+ - ORM for database operations
@@ -41,10 +43,12 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
 - **Pino** - Structured logging
 
 ### Database
+
 - **PostgreSQL** 15+ - Primary database
 - **Prisma Accelerate** - Database connection pooling
 
 ### DevOps & Deployment
+
 - **Docker** 24+ - Container runtime
 - **Docker Compose** 2.0+ - Container orchestration
 - **Node.js Alpine** - Minimal Docker images
@@ -70,16 +74,19 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
 ### Docker Setup (Recommended)
 
 1. **Build and start all services**
+
    ```bash
    docker-compose up -d
    ```
 
 2. **Verify services are running**
+
    ```bash
    docker-compose ps
    ```
 
 3. **Access the application**
+
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:5000
    - Database: localhost:5432
@@ -92,12 +99,14 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
 ### Local Development Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd partnr-saas
    ```
 
 2. **Setup Backend**
+
    ```bash
    cd backend
    npm install
@@ -114,26 +123,12 @@ Partnr is a modern SaaS platform designed to enable organizations to manage thei
    npm run dev
    ```
 
-## 📋 Environment Variables
-
-### Backend `.env` File
-
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/saas_db
-NODE_ENV=development
-PORT=5000
-JWT_SECRET=your-secret-key-min-32-chars
-JWT_EXPIRES_IN=24h
-FRONTEND_URL=http://localhost:3000
-LOG_LEVEL=debug
-BCRYPT_ROUNDS=10
-```
-
 ## 📚 API Documentation
 
 See [docs/API.md](./docs/API.md) for complete API reference with all 19+ endpoints.
 
 ### Main Endpoint Categories
+
 - **Authentication** - Register, login, logout
 - **Tenants** - Manage organizations
 - **Users** - Manage users per tenant
@@ -153,21 +148,25 @@ See [docs/API.md](./docs/API.md) for complete API reference with all 19+ endpoin
 ## 🧪 Testing Credentials
 
 **Super Admin**
+
 - Email: `superadmin@system.com`
 - Password: `Admin@123`
 
 **Tenant Admin**
+
 - Email: `admin@demo.com`
 - Password: `Demo@123`
 - Subdomain: `demo`
 
 **Regular Users**
+
 - Email: `user1@demo.com` or `user2@demo.com`
 - Password: `User@123`
 
 ## 📦 Docker Services
 
 All services configured with health checks and auto-restart:
+
 - **database**: PostgreSQL 15 (Port 5432)
 - **backend**: Node.js Express API (Port 5000)
 - **frontend**: React Vite App (Port 3000)
@@ -175,18 +174,21 @@ All services configured with health checks and auto-restart:
 ## 🔧 Development Commands
 
 **Backend**
+
 ```bash
 npm run dev      # Start with nodemon
 npm start        # Production mode
 ```
 
 **Frontend**
+
 ```bash
 npm run dev      # Start dev server
 npm run build    # Build for production
 ```
 
 **Docker**
+
 ```bash
 docker-compose up -d      # Start all services
 docker-compose down       # Stop all services
@@ -223,44 +225,8 @@ partnr-saas/
 └── submission.json          # Test credentials
 ```
 
-## ✅ Deployment Checklist
-
-- [x] Docker configuration with docker-compose.yml
-- [x] Dockerfile for backend with automatic migrations and seeding
-- [x] Dockerfile for frontend with production build
-- [x] Health check endpoint responding with database status
-- [x] All 19+ API endpoints implemented
-- [x] Complete API documentation in docs/API.md
-- [x] Comprehensive README.md
-- [x] Test credentials in submission.json
-- [x] Minimum 31 commits with meaningful messages
-- [x] Multi-tenancy with data isolation
-- [x] JWT authentication and authorization
-- [x] Role-based access control (3 roles)
-- [x] Database migrations and seeding
-
-## 🐛 Troubleshooting
-
-**Backend not connecting to database in Docker**
-- Ensure DATABASE_URL uses service name: `database` not `localhost`
-- Check if database container is healthy: `docker-compose ps`
-- View logs: `docker-compose logs database`
-
 **Frontend API calls failing**
+
 - Verify CORS configuration in backend
 - Ensure backend health check passes: `curl http://localhost:5000/api/health`
 - Check browser console for error details
-
-**Docker container won't start**
-- Check logs: `docker-compose logs service-name`
-- Ensure ports 3000, 5000, 5432 are available
-- Rebuild: `docker-compose build --no-cache`
-
-## �� License
-
-Proprietary - Partnr Network 2025-2026
-
----
-
-**Version**: 1.0.0  
-**Status**: Production Ready ✅

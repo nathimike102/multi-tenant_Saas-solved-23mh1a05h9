@@ -18,24 +18,7 @@ RUN npx prisma generate
 EXPOSE 5000
 
 # Create entrypoint script
-RUN cat > /app/entrypoint.sh << 'SCRIPT'
-#!/bin/sh
-set -e
-
-echo "Waiting for database to be ready..."
-sleep 5
-
-echo "Running database migrations..."
-npx prisma migrate deploy || true
-
-echo "Seeding database with initial data..."
-node scripts/seed.js || true
-
-echo "Starting application..."
-exec node src/index.js
-SCRIPT
-
-RUN chmod +x /app/entrypoint.sh
+RUN printf '#!/bin/sh\nset -e\n\necho "Waiting for database to be ready..."\nsleep 5\n\necho "Running database migrations..."\nnpx prisma migrate deploy || true\n\necho "Seeding database with initial data..."\nnode scripts/seed.js || true\n\necho "Starting application..."\nexec node src/index.js\n' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Start application
 CMD ["/app/entrypoint.sh"]
