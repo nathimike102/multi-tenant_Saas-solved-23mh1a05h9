@@ -3,6 +3,7 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import ProtectedRoute from './auth/ProtectedRoute.jsx';
+import Layout from './components/Layout.jsx';
 
 export default function App() {
   return (
@@ -11,7 +12,10 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route element={<ProtectedRoute />}> 
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          {/* Future: projects, tasks, users, tenants routes */}
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />
