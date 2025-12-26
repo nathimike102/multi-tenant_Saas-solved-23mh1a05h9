@@ -26,8 +26,8 @@ class AuthService {
 
     // Validate password strength
     const passwordValidation = passwordUtils.validatePasswordStrength(adminPassword);
-    if (!passwordValidation.valid) {
-      throw new Error(`PASSWORD_WEAK: ${passwordValidation.message}`, { statusCode: 400 });
+    if (!passwordValidation.isValid) {
+      throw new Error(`PASSWORD_WEAK: ${passwordValidation.errors.join(', ')}`, { statusCode: 400 });
     }
 
     // Transaction: create tenant + admin user
