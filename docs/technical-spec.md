@@ -8,75 +8,71 @@
 backend/
 ├── src/
 │   ├── controllers/          # Request handlers for each module
-│   │   ├── auth.controller.ts
-│   │   ├── tenant.controller.ts
-│   │   ├── user.controller.ts
-│   │   ├── project.controller.ts
-│   │   └── task.controller.ts
+│   │   ├── auth.controller.js
+│   │   ├── tenant.controller.js
+│   │   ├── user.controller.js
+│   │   ├── project.controller.js
+│   │   └── task.controller.js
 │   ├── middleware/           # Express middleware functions
-│   │   ├── auth.middleware.ts        # JWT validation
-│   │   ├── rbac.middleware.ts        # Role-based access control
-│   │   ├── tenant.middleware.ts      # Tenant context injection
-│   │   ├── validation.middleware.ts  # Request validation
-│   │   ├── rateLimit.middleware.ts   # Rate limiting
-│   │   └── errorHandler.middleware.ts
+│   │   ├── auth.middleware.js        # JWT validation
+│   │   ├── rbac.middleware.js        # Role-based access control
+│   │   ├── tenant.middleware.js      # Tenant context injection
+│   │   ├── validation.middleware.js  # Request validation
+│   │   ├── rateLimit.middleware.js   # Rate limiting
+│   │   └── errorHandler.middleware.js
 │   ├── models/               # Database models (Prisma schema)
 │   │   └── schema.prisma     # Prisma schema definition
 │   ├── routes/               # API route definitions
-│   │   ├── index.ts
-│   │   ├── auth.routes.ts
-│   │   ├── tenant.routes.ts
-│   │   ├── user.routes.ts
-│   │   ├── project.routes.ts
-│   │   └── task.routes.ts
+│   │   ├── index.js
+│   │   ├── auth.routes.js
+│   │   ├── tenant.routes.js
+│   │   ├── user.routes.js
+│   │   ├── project.routes.js
+│   │   └── task.routes.js
 │   ├── services/             # Business logic layer
-│   │   ├── auth.service.ts
-│   │   ├── tenant.service.ts
-│   │   ├── user.service.ts
-│   │   ├── project.service.ts
-│   │   ├── task.service.ts
-│   │   ├── email.service.ts
-│   │   └── audit.service.ts
+│   │   ├── auth.service.js
+│   │   ├── tenant.service.js
+│   │   ├── user.service.js
+│   │   ├── project.service.js
+│   │   ├── task.service.js
+│   │   ├── email.service.js
+│   │   └── audit.service.js
 │   ├── repositories/         # Data access layer (tenant-scoped)
-│   │   ├── base.repository.ts
-│   │   ├── tenant.repository.ts
-│   │   ├── user.repository.ts
-│   │   ├── project.repository.ts
-│   │   └── task.repository.ts
+│   │   ├── base.repository.js
+│   │   ├── tenant.repository.js
+│   │   ├── user.repository.js
+│   │   ├── project.repository.js
+│   │   └── task.repository.js
 │   ├── utils/                # Helper functions and utilities
-│   │   ├── jwt.util.ts
-│   │   ├── password.util.ts
-│   │   ├── validation.util.ts
-│   │   ├── logger.util.ts
-│   │   └── response.util.ts
+│   │   ├── jwt.util.js
+│   │   ├── password.util.js
+│   │   ├── validation.util.js
+│   │   ├── logger.util.js
+│   │   └── response.util.js
 │   ├── config/               # Configuration files
-│   │   ├── database.config.ts
-│   │   ├── jwt.config.ts
-│   │   ├── email.config.ts
-│   │   └── app.config.ts
-│   ├── types/                # TypeScript type definitions
-│   │   ├── express.d.ts      # Extended Express types
-│   │   ├── auth.types.ts
-│   │   └── api.types.ts
-│   └── app.ts                # Express app initialization
+│   │   ├── database.config.js
+│   │   ├── jwt.config.js
+│   │   ├── email.config.js
+│   │   └── app.config.js
+│   └── app.js                # Express app initialization
 ├── prisma/
 │   ├── schema.prisma         # Database schema
 │   ├── migrations/           # Database migrations
-│   └── seed.ts               # Database seed data
+│   └── seed.js               # Database seed data
 ├── tests/
 │   ├── unit/                 # Unit tests
 │   │   ├── services/
 │   │   ├── repositories/
 │   │   └── utils/
 │   ├── integration/          # Integration tests
-│   │   ├── auth.test.ts
-│   │   ├── tenant.test.ts
-│   │   └── project.test.ts
-│   └── setup.ts              # Test configuration
+│   │   ├── auth.test.js
+│   │   ├── tenant.test.js
+│   │   └── project.test.js
+│   └── setup.js              # Test configuration
 ├── .env.example              # Environment variables template
 ├── .gitignore
 ├── package.json
-├── tsconfig.json
+├── .eslintrc.js
 ├── Dockerfile
 └── docker-compose.yml
 ```
@@ -92,85 +88,79 @@ frontend/
 ├── src/
 │   ├── components/           # Reusable React components
 │   │   ├── common/           # Shared components
-│   │   │   ├── Button.tsx
-│   │   │   ├── Input.tsx
-│   │   │   ├── Modal.tsx
-│   │   │   ├── Dropdown.tsx
-│   │   │   └── Loader.tsx
+│   │   │   ├── Button.jsx
+│   │   │   ├── Input.jsx
+│   │   │   ├── Modal.jsx
+│   │   │   ├── Dropdown.jsx
+│   │   │   └── Loader.jsx
 │   │   ├── layout/           # Layout components
-│   │   │   ├── Header.tsx
-│   │   │   ├── Sidebar.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   └── MainLayout.tsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── MainLayout.jsx
 │   │   ├── auth/             # Auth-specific components
-│   │   │   ├── LoginForm.tsx
-│   │   │   ├── PasswordReset.tsx
-│   │   │   └── MFASetup.tsx
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── PasswordReset.jsx
+│   │   │   └── MFASetup.jsx
 │   │   ├── projects/         # Project module components
-│   │   │   ├── ProjectCard.tsx
-│   │   │   ├── ProjectList.tsx
-│   │   │   └── ProjectForm.tsx
+│   │   │   ├── ProjectCard.jsx
+│   │   │   ├── ProjectList.jsx
+│   │   │   └── ProjectForm.jsx
 │   │   └── tasks/            # Task module components
-│   │       ├── TaskCard.tsx
-│   │       ├── TaskList.tsx
-│   │       └── TaskForm.tsx
+│   │       ├── TaskCard.jsx
+│   │       ├── TaskList.jsx
+│   │       └── TaskForm.jsx
 │   ├── pages/                # Page components (routes)
 │   │   ├── auth/
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── RegisterPage.tsx
-│   │   │   └── ResetPasswordPage.tsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── RegisterPage.jsx
+│   │   │   └── ResetPasswordPage.jsx
 │   │   ├── dashboard/
-│   │   │   └── DashboardPage.tsx
+│   │   │   └── DashboardPage.jsx
 │   │   ├── projects/
-│   │   │   ├── ProjectsPage.tsx
-│   │   │   └── ProjectDetailPage.tsx
+│   │   │   ├── ProjectsPage.jsx
+│   │   │   └── ProjectDetailPage.jsx
 │   │   ├── tasks/
-│   │   │   └── TasksPage.tsx
+│   │   │   └── TasksPage.jsx
 │   │   ├── users/
-│   │   │   └── UsersPage.tsx
-│   │   └── NotFoundPage.tsx
+│   │   │   └── UsersPage.jsx
+│   │   └── NotFoundPage.jsx
 │   ├── hooks/                # Custom React hooks
-│   │   ├── useAuth.ts
-│   │   ├── useTenant.ts
-│   │   ├── useProjects.ts
-│   │   ├── useTasks.ts
-│   │   └── useDebounce.ts
+│   │   ├── useAuth.js
+│   │   ├── useTenant.js
+│   │   ├── useProjects.js
+│   │   ├── useTasks.js
+│   │   └── useDebounce.js
 │   ├── services/             # API service layer
-│   │   ├── api.service.ts    # Base API client
-│   │   ├── auth.service.ts
-│   │   ├── project.service.ts
-│   │   ├── task.service.ts
-│   │   └── user.service.ts
+│   │   ├── api.service.js    # Base API client
+│   │   ├── auth.service.js
+│   │   ├── project.service.js
+│   │   ├── task.service.js
+│   │   └── user.service.js
 │   ├── store/                # State management (if using Redux/Zustand)
-│   │   ├── authSlice.ts
-│   │   ├── tenantSlice.ts
-│   │   └── store.ts
+│   │   ├── authSlice.js
+│   │   ├── tenantSlice.js
+│   │   └── store.js
 │   ├── routes/               # Route configuration
-│   │   ├── AppRoutes.tsx
-│   │   ├── ProtectedRoute.tsx
-│   │   └── RoleRoute.tsx
+│   │   ├── AppRoutes.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   └── RoleRoute.jsx
 │   ├── utils/                # Utility functions
-│   │   ├── auth.util.ts
-│   │   ├── validation.util.ts
-│   │   ├── format.util.ts
-│   │   └── constants.ts
-│   ├── types/                # TypeScript type definitions
-│   │   ├── auth.types.ts
-│   │   ├── project.types.ts
-│   │   ├── task.types.ts
-│   │   └── api.types.ts
+│   │   ├── auth.util.js
+│   │   ├── validation.util.js
+│   │   ├── format.util.js
+│   │   └── constants.js
 │   ├── styles/               # Global styles
 │   │   ├── globals.css
 │   │   ├── variables.css
 │   │   └── themes.css
-│   ├── App.tsx               # Root component
-│   ├── main.tsx              # Entry point
-│   └── vite-env.d.ts         # Vite types
+│   ├── App.jsx               # Root component
+│   └── main.jsx              # Entry point
 ├── .env.example              # Environment variables template
 ├── .gitignore
 ├── package.json
-├── tsconfig.json
-├── vite.config.ts            # Vite configuration
+├── .eslintrc.js
+├── vite.config.js            # Vite configuration
 ├── tailwind.config.js        # Tailwind CSS config
 ├── Dockerfile
 └── docker-compose.yml
@@ -188,8 +178,7 @@ frontend/
 - **`src/repositories/`**: Data access layer. Encapsulates all database queries with tenant scoping. Ensures no query bypasses tenant isolation.
 - **`src/utils/`**: Reusable helper functions (JWT signing/verification, password hashing, logging, response formatting).
 - **`src/config/`**: Configuration modules for database, JWT, email, and application settings. Reads from environment variables.
-- **`src/types/`**: TypeScript type definitions and interfaces. Extends Express types to include custom request properties (user, tenant).
-- **`prisma/`**: Prisma schema and migrations. `prisma migrate` generates SQL migrations; `seed.ts` populates initial data.
+- **`prisma/`**: Prisma schema and migrations. `prisma migrate` generates SQL migrations; `seed.js` populates initial data.
 - **`tests/`**: Unit and integration tests. Unit tests for services/repositories; integration tests for full API flows.
 
 #### Frontend Folders
@@ -201,7 +190,6 @@ frontend/
 - **`src/store/`**: Global state management (Redux Toolkit, Zustand, or Context API). Manages auth state, tenant context, and cached data.
 - **`src/routes/`**: Route definitions and protected route wrappers. Handles route guards based on authentication and role.
 - **`src/utils/`**: Helper functions (formatting, validation, constants). Shared utilities used across components.
-- **`src/types/`**: TypeScript interfaces matching backend API contracts. Ensures type safety for API responses.
 - **`src/styles/`**: Global CSS, theme variables, and style utilities (if not using Tailwind exclusively).
 
 ---
@@ -535,13 +523,11 @@ npx prisma db seed
 cd backend
 npm run lint          # ESLint
 npm run format        # Prettier
-npm run type-check    # TypeScript
 
 # Frontend
 cd frontend
 npm run lint
 npm run format
-npm run type-check
 ```
 
 #### Docker Management
@@ -630,7 +616,7 @@ npm run dev
 | **UI Framework** | Tailwind CSS | 3.x |
 | **Backend Framework** | Express.js | 4.x |
 | **Runtime** | Node.js | 18.x/20.x |
-| **Language** | TypeScript | 5.x |
+| **Language** | JavaScript (ES6+) | Latest |
 | **Database** | PostgreSQL | 15.x |
 | **ORM** | Prisma | 5.x |
 | **Authentication** | JWT | jsonwebtoken |
