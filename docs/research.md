@@ -87,11 +87,12 @@ The stack prioritizes fast delivery, clear multi-tenant patterns, mature tooling
 
 ### 2.2 Frontend Framework
 
-- Choice: Next.js (React)
-  - Why: Hybrid SSR/SSG/ISR for fast initial paint and SEO; mature auth patterns with JWT; vast ecosystem of UI libraries; easy environment configuration inside Docker.
-  - Fit: Rapid development of protected routes, role‑based UI, and responsive dashboards.
-  - Libraries: React Query/TanStack Query for data fetching, Tailwind CSS or MUI for components, React Hook Form with Zod for forms.
+- Choice: React (SPA with React Router)
+  - Why: Flexible, component-based architecture; vast ecosystem of UI libraries; mature auth patterns with JWT; excellent developer experience; easy to deploy as static assets inside Docker.
+  - Fit: Rapid development of protected routes, role‑based UI, and responsive dashboards with client-side routing.
+  - Libraries: React Router for routing, React Query/TanStack Query for data fetching, Tailwind CSS or MUI for components, React Hook Form with Zod for forms.
 - Alternatives considered
+  - Next.js (React): Hybrid SSR/SSG/ISR for fast initial paint and SEO; adds complexity for a straightforward SPA use case where SSR may not be critical.
   - Nuxt (Vue): Strong DX; smaller hiring pool for some teams and fewer sample integrations for the exact requirements.
   - Angular: Enterprise‑friendly; heavier framework and steeper learning curve for MVP cadence.
 
