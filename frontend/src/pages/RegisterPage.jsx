@@ -132,12 +132,12 @@ export default function RegisterPage() {
   );
 }
 
-function PasswordInput(props) {
+function PasswordInput({ ...props }) {
   const [show, setShow] = useState(false);
   return (
     <div style={{ position: 'relative' }}>
-      <input type={show ? 'text' : 'password'} {...props} />
-      <button type="button" onClick={() => setShow((s) => !s)} style={{ position: 'absolute', right: 6, top: 6, width: 'auto' }}>
+      <input type={show ? 'text' : 'password'} {...props} placeholder={props.placeholder} />
+      <button type="button" onClick={(e) => { e.preventDefault(); setShow((s) => !s); }} style={{ position: 'absolute', right: 6, top: 6, width: 'auto', padding: '6px 8px' }}>
         {show ? 'Hide' : 'Show'}
       </button>
     </div>
