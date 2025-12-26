@@ -19,14 +19,20 @@ npm run preview
 ```
 
 ## Routing
+
 - `/register` – Tenant registration
 - `/login` – Login
-- `/dashboard` – Protected dashboard
+- `/dashboard` – Protected dashboard (stats, recent projects, my tasks)
+- `/projects` – Projects list with search and filter
+- `/projects/:projectId` – Project details with task management
+- `/users` – User management (tenant_admin+)
 
 ## Auth
+
 - Stores JWT in localStorage
 - Verifies token on app load via `/api/auth/me`
 - Clears auth and redirects on 401 responses
 
 ## API Proxy
+
 Vite dev proxy forwards `/api` to `http://localhost:5000`.
