@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const logger = require('./utils/logger');
+const db = require('./config/database');
 
 // Middleware imports
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -12,8 +13,12 @@ const apiRoutes = require('./routes');
 // Initialize express app
 const app = express();
 
-// Middleware setup
-app.use(cors());
+// Middleware setup - CORS with environment variable
+const corsOrigin = process.env.FRONTEND_URL || 'http://localhost:3000'\;
+app.use(cors({
+  origin: corsOrigin,
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,7 +35,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check endpoint
+// Health check endpoint with database status
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    await db.prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', database: 'connected', timestamp: new Date().toISOString() });
+  } catch (error) {
+    logger.error('Health check failed', error);
+    res.status(503).json({ status: 'error', database: 'disconnected', timestamp: new Date().toISOString() });
+  }
+});
+
+// Legacy health endpoint for compatibility
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });

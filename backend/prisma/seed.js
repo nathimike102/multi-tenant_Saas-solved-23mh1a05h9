@@ -1,3 +1,4 @@
+// Prisma seed file - runs automatically after migrations
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
@@ -5,214 +6,197 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Starting database seed...');
-  await prisma.auditLog.deleteMany();
-  await prisma.task.deleteMany();
-  await prisma.project.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.tenant.deleteMany();
-  console.log('Cleared existing data');
+  try {
+    console.log('🌱 Starting database seed...');
 
-  const superAdminPassword = await bcrypt.hash('Admin@123', 10);
-  const demoAdminPassword = await bcrypt.hash('Demo@123', 10);
-  const userPassword = await bcrypt.hash('User@123', 10);
+    // Hash passwords
+    const superAdminPassword = await bcrypt.hash('Admin@123', 10);
+    const tenantAdminPassword = await bcrypt.hash('Demo@123', 10);
+    const userPassword = await bcrypt.hash('User@123', 10);
 
-  const superAdmin = await prisma.user.create({
-    data: {
-      email: 'superadmin@system.com',
-      passwordHash: superAdminPassword,
-      fullName: 'Super Administrator',
-      role: 'super_admin',
-      isActive: true,
-      tenantId: null, 
-    },
-  });
-  console.log('✓ Created Super Admin account');
+    // 1. Create Super Admin User (tenant_id = null)
+    const superAdmin = await prisma.user.upsert({
+      where: { email: 'superadmin@system.com' },
+      update: {},
+      create: {
+        email: 'superadmin@system.com',
+        passwordHash: superAdminPassword,
+        fullName: 'Super Administrator',
+        role: 'super_admin',
+        isActive: true,
+        tenantId: null,
+      },
+    });
+    console.log('✓ Super admin user created:', superAdmin.email);
 
-  const demoTenant = await prisma.tenant.create({
-    data: {
-      name: 'Demo Company',
-      subdomain: 'demo',
-      status: 'active',
-      subscriptionPlan: 'pro',
-      maxUsers: 50,
-      maxProjects: 100,
-    },
-  });
-  console.log('✓ Created Demo Company tenant');
+    // 2. Create Demo Tenant
+    const demoTenant = await prisma.tenant.upsert({
+      where: { subdomain: 'demo' },
+      update: {},
+      create: {
+        name: 'Demo Company',
+        subdomain: 'demo',
+        status: 'active',
+        subscriptionPlan: 'pro',
+        maxUsers: 50,
+        maxProjects: 20,
+      },
+    });
+    console.log('✓ Demo tenant created:', demoTenant.name);
 
-  const demoAdmin = await prisma.user.create({
-    data: {
-      tenantId: demoTenant.id,
-      email: 'admin@demo.com',
-      passwordHash: demoAdminPassword,
-      fullName: 'Demo Admin',
-      role: 'tenant_admin',
-      isActive: true,
-    },
-  });
-  console.log('✓ Created Tenant Admin for Demo Company');
-
-  const user1 = await prisma.user.create({
-    data: {
-      tenantId: demoTenant.id,
-      email: 'user1@demo.com',
-      passwordHash: userPassword,
-      fullName: 'John Doe',
-      role: 'user',
-      isActive: true,
-    },
-  });
-
-  const user2 = await prisma.user.create({
-    data: {
-      tenantId: demoTenant.id,
-      email: 'user2@demo.com',
-      passwordHash: userPassword,
-      fullName: 'Jane Smith',
-      role: 'user',
-      isActive: true,
-    },
-  });
-  console.log('✓ Created 2 regular users for Demo Company');
-
-  const project1 = await prisma.project.create({
-    data: {
-      tenantId: demoTenant.id,
-      name: 'Website Redesign',
-      description: 'Complete redesign of the company website with modern UI/UX',
-      status: 'active',
-      createdBy: demoAdmin.id,
-    },
-  });
-
-  const project2 = await prisma.project.create({
-    data: {
-      tenantId: demoTenant.id,
-      name: 'Mobile App Development',
-      description: 'Develop a mobile app for iOS and Android platforms',
-      status: 'active',
-      createdBy: demoAdmin.id,
-    },
-  });
-  console.log('✓ Created 2 sample projects');
-
-  await prisma.task.createMany({
-    data: [
-      {
-        projectId: project1.id,
+    // 3. Create Tenant Admin
+    const tenantAdmin = await prisma.user.upsert({
+      where: { email: 'admin@demo.com' },
+      update: {},
+      create: {
+        email: 'admin@demo.com',
+        passwordHash: tenantAdminPassword,
+        fullName: 'Demo Admin',
+        role: 'tenant_admin',
+        isActive: true,
         tenantId: demoTenant.id,
-        title: 'Create wireframes for homepage',
-        description: 'Design wireframes for the new homepage layout',
+      },
+    });
+    console.log('✓ Tenant admin created:', tenantAdmin.email);
+
+    // 4. Create Regular Users
+    const user1 = await prisma.user.upsert({
+      where: { email: 'user1@demo.com' },
+      update: {},
+      create: {
+        email: 'user1@demo.com',
+        passwordHash: userPassword,
+        fullName: 'Demo User One',
+        role: 'user',
+        isActive: true,
+        tenantId: demoTenant.id,
+      },
+    });
+    console.log('✓ User 1 created:', user1.email);
+
+    const user2 = await prisma.user.upsert({
+      where: { email: 'user2@demo.com' },
+      update: {},
+      create: {
+        email: 'user2@demo.com',
+        passwordHash: userPassword,
+        fullName: 'Demo User Two',
+        role: 'user',
+        isActive: true,
+        tenantId: demoTenant.id,
+      },
+    });
+    console.log('✓ User 2 created:', user2.email);
+
+    // 5. Create Projects
+    const project1 = await prisma.project.upsert({
+      where: { 
+        name_tenantId: {
+          name: 'Project Alpha',
+          tenantId: demoTenant.id,
+        },
+      },
+      update: {},
+      create: {
+        name: 'Project Alpha',
+        description: 'First demo project for the platform',
+        status: 'active',
+        tenantId: demoTenant.id,
+        createdBy: tenantAdmin.id,
+      },
+    });
+    console.log('✓ Project 1 created:', project1.name);
+
+    const project2 = await prisma.project.upsert({
+      where: { 
+        name_tenantId: {
+          name: 'Project Beta',
+          tenantId: demoTenant.id,
+        },
+      },
+      update: {},
+      create: {
+        name: 'Project Beta',
+        description: 'Second demo project for testing',
+        status: 'active',
+        tenantId: demoTenant.id,
+        createdBy: tenantAdmin.id,
+      },
+    });
+    console.log('✓ Project 2 created:', project2.name);
+
+    // 6. Create Tasks
+    const task1 = await prisma.task.upsert({
+      where: { 
+        title_projectId: {
+          title: 'Setup project infrastructure',
+          projectId: project1.id,
+        },
+      },
+      update: {},
+      create: {
+        title: 'Setup project infrastructure',
+        description: 'Initialize and configure the project environment',
+        status: 'in_progress',
+        priority: 'high',
+        tenantId: demoTenant.id,
+        projectId: project1.id,
+        assignedTo: user1.id,
+        createdBy: tenantAdmin.id,
+      },
+    });
+    console.log('✓ Task 1 created:', task1.title);
+
+    const task2 = await prisma.task.upsert({
+      where: { 
+        title_projectId: {
+          title: 'Design database schema',
+          projectId: project1.id,
+        },
+      },
+      update: {},
+      create: {
+        title: 'Design database schema',
+        description: 'Create comprehensive database schema for the project',
         status: 'completed',
         priority: 'high',
-        assignedTo: user1.id,
-        dueDate: new Date('2025-01-15'),
-      },
-      {
-        projectId: project1.id,
         tenantId: demoTenant.id,
-        title: 'Develop responsive navigation',
-        description: 'Implement a mobile-responsive navigation menu',
-        status: 'in_progress',
-        priority: 'high',
-        assignedTo: user1.id,
-        dueDate: new Date('2025-01-20'),
-      },
-      {
         projectId: project1.id,
-        tenantId: demoTenant.id,
-        title: 'Setup analytics tracking',
-        description: 'Integrate Google Analytics and setup conversion tracking',
+        assignedTo: user2.id,
+        createdBy: tenantAdmin.id,
+      },
+    });
+    console.log('✓ Task 2 created:', task2.title);
+
+    const task3 = await prisma.task.upsert({
+      where: { 
+        title_projectId: {
+          title: 'Implement API endpoints',
+          projectId: project2.id,
+        },
+      },
+      update: {},
+      create: {
+        title: 'Implement API endpoints',
+        description: 'Develop REST API endpoints for the application',
         status: 'todo',
         priority: 'medium',
-        assignedTo: user2.id,
-        dueDate: new Date('2025-01-25'),
-      },
-      {
+        tenantId: demoTenant.id,
         projectId: project2.id,
-        tenantId: demoTenant.id,
-        title: 'Design app login screen',
-        description: 'Create UI design for the mobile app login screen',
-        status: 'in_progress',
-        priority: 'high',
-        assignedTo: user2.id,
-        dueDate: new Date('2025-01-18'),
+        assignedTo: user1.id,
+        createdBy: tenantAdmin.id,
       },
-      {
-        projectId: project2.id,
-        tenantId: demoTenant.id,
-        title: 'Setup push notifications',
-        description: 'Implement push notification system for both iOS and Android',
-        status: 'todo',
-        priority: 'low',
-        assignedTo: null, 
-        dueDate: new Date('2025-02-01'),
-      },
-    ],
-  });
-  console.log('✓ Created 5 sample tasks');
+    });
+    console.log('✓ Task 3 created:', task3.title);
 
-  await prisma.auditLog.createMany({
-    data: [
-      {
-        tenantId: demoTenant.id,
-        userId: demoAdmin.id,
-        action: 'CREATE_PROJECT',
-        entityType: 'project',
-        entityId: project1.id,
-        ipAddress: '127.0.0.1',
-      },
-      {
-        tenantId: demoTenant.id,
-        userId: demoAdmin.id,
-        action: 'CREATE_PROJECT',
-        entityType: 'project',
-        entityId: project2.id,
-        ipAddress: '127.0.0.1',
-      },
-      {
-        tenantId: null,
-        userId: superAdmin.id,
-        action: 'CREATE_TENANT',
-        entityType: 'tenant',
-        entityId: demoTenant.id,
-        ipAddress: '127.0.0.1',
-      },
-    ],
-  });
-  console.log('✓ Created audit log entries');
+    console.log('\n✅ Database seed completed successfully!');
 
-  console.log('\n✅ Database seeding completed successfully!\n');
-  console.log('========================================');
-  console.log('SEED DATA SUMMARY');
-  console.log('========================================');
-  console.log('\n📧 Super Admin Account:');
-  console.log('   Email: superadmin@system.com');
-  console.log('   Password: Admin@123');
-  console.log('   Role: super_admin');
-  console.log('\n🏢 Demo Company Tenant:');
-  console.log('   Subdomain: demo');
-  console.log('   Plan: pro');
-  console.log('\n👤 Tenant Admin:');
-  console.log('   Email: admin@demo.com');
-  console.log('   Password: Demo@123');
-  console.log('   Role: tenant_admin');
-  console.log('\n👥 Regular Users:');
-  console.log('   User 1: user1@demo.com / User@123');
-  console.log('   User 2: user2@demo.com / User@123');
-  console.log('\n📊 Projects: 2');
-  console.log('   - Website Redesign');
-  console.log('   - Mobile App Development');
-  console.log('\n✅ Tasks: 5 (distributed across projects)');
-  console.log('========================================\n');
+  } catch (error) {
+    console.error('❌ Error during seed:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
-main()
-  .catch((e) => {
-    console.error('Error during seeding:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();
