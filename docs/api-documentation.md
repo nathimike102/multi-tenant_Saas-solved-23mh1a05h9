@@ -23,6 +23,7 @@ Tokens expire in 24 hours.
 ## Module 1: Authentication (4 Endpoints)
 
 ### 1. Register Tenant
+
 - **Endpoint**: `POST /auth/register-tenant`
 - **Auth**: None (Public)
 - **Request Body**:
@@ -59,12 +60,13 @@ Tokens expire in 24 hours.
     }
   }
   ```
-- **Validation**: 
+- **Validation**:
   - Subdomain must be unique
   - Email must be unique
   - Password must be 8+ chars with uppercase, lowercase, and number
 
 ### 2. Login
+
 - **Endpoint**: `POST /auth/login`
 - **Auth**: None (Public)
 - **Request Body**:
@@ -92,6 +94,7 @@ Tokens expire in 24 hours.
   ```
 
 ### 3. Get Current User
+
 - **Endpoint**: `GET /auth/me`
 - **Auth**: Required (any authenticated user)
 - **Response** (200):
@@ -110,6 +113,7 @@ Tokens expire in 24 hours.
   ```
 
 ### 4. Logout
+
 - **Endpoint**: `POST /auth/logout`
 - **Auth**: Required
 - **Response** (200):
@@ -125,6 +129,7 @@ Tokens expire in 24 hours.
 ## Module 2: Tenant Management (3 Endpoints)
 
 ### 5. Get Tenant Details
+
 - **Endpoint**: `GET /tenants/:tenantId`
 - **Auth**: Required (authenticated user)
 - **Response** (200):
@@ -149,6 +154,7 @@ Tokens expire in 24 hours.
   ```
 
 ### 6. Update Tenant
+
 - **Endpoint**: `PUT /tenants/:tenantId`
 - **Auth**: Required (tenant_admin or super_admin)
 - **Request Body** (all optional):
@@ -165,6 +171,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Updated tenant object
 
 ### 7. List All Tenants
+
 - **Endpoint**: `GET /tenants?page=1&limit=50&status=active&subscriptionPlan=pro`
 - **Auth**: Required (super_admin only)
 - **Query Params**:
@@ -193,6 +200,7 @@ Tokens expire in 24 hours.
 ## Module 3: User Management (4 Endpoints)
 
 ### 8. Add User
+
 - **Endpoint**: `POST /tenants/:tenantId/users`
 - **Auth**: Required (tenant_admin)
 - **Request Body**:
@@ -208,6 +216,7 @@ Tokens expire in 24 hours.
 - **Validation**: Email must be unique within tenant, password must meet strength requirements
 
 ### 9. List Users
+
 - **Endpoint**: `GET /tenants/:tenantId/users?page=1&limit=50&role=user&isActive=true&search=Jane`
 - **Auth**: Required (tenant member)
 - **Query Params**:
@@ -219,6 +228,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Paginated users list
 
 ### 10. Update User
+
 - **Endpoint**: `PUT /tenants/:tenantId/users/:userId`
 - **Auth**: Required (tenant_admin)
 - **Request Body** (all optional):
@@ -233,6 +243,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Updated user object
 
 ### 11. Delete User
+
 - **Endpoint**: `DELETE /tenants/:tenantId/users/:userId`
 - **Auth**: Required (tenant_admin)
 - **Response** (200):
@@ -249,6 +260,7 @@ Tokens expire in 24 hours.
 ## Module 4: Project Management (4 Endpoints)
 
 ### 12. Create Project
+
 - **Endpoint**: `POST /tenants/:tenantId/projects`
 - **Auth**: Required (tenant member)
 - **Request Body**:
@@ -262,6 +274,7 @@ Tokens expire in 24 hours.
 - **Validation**: Tenant cannot exceed maxProjects limit
 
 ### 13. List Projects
+
 - **Endpoint**: `GET /tenants/:tenantId/projects?page=1&limit=50&status=active&search=redesign`
 - **Auth**: Required (tenant member)
 - **Query Params**:
@@ -272,6 +285,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Paginated projects with task counts
 
 ### 14. Update Project
+
 - **Endpoint**: `PUT /tenants/:tenantId/projects/:projectId`
 - **Auth**: Required (tenant member)
 - **Request Body** (all optional):
@@ -285,6 +299,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Updated project object
 
 ### 15. Delete Project
+
 - **Endpoint**: `DELETE /tenants/:tenantId/projects/:projectId`
 - **Auth**: Required (tenant member)
 - **Response** (200): Success message
@@ -295,6 +310,7 @@ Tokens expire in 24 hours.
 ## Module 5: Task Management (4 Endpoints)
 
 ### 16. Create Task
+
 - **Endpoint**: `POST /tenants/:tenantId/projects/:projectId/tasks`
 - **Auth**: Required (tenant member)
 - **Request Body**:
@@ -312,6 +328,7 @@ Tokens expire in 24 hours.
 - **Priority**: low, medium, high
 
 ### 17. List Tasks
+
 - **Endpoint**: `GET /tenants/:tenantId/projects/:projectId/tasks?page=1&limit=50&status=todo&priority=high&search=design`
 - **Auth**: Required (tenant member)
 - **Query Params**:
@@ -324,6 +341,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Paginated tasks with assignee details
 
 ### 18. Update Task Status
+
 - **Endpoint**: `PATCH /tenants/:tenantId/tasks/:taskId/status`
 - **Auth**: Required (tenant member)
 - **Request Body**:
@@ -335,6 +353,7 @@ Tokens expire in 24 hours.
 - **Response** (200): Updated task with new status
 
 ### 19. Update Task
+
 - **Endpoint**: `PUT /tenants/:tenantId/tasks/:taskId`
 - **Auth**: Required (tenant member)
 - **Request Body** (all optional):
@@ -355,6 +374,7 @@ Tokens expire in 24 hours.
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
   "status": "error",
@@ -366,6 +386,7 @@ Tokens expire in 24 hours.
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "status": "error",
@@ -374,6 +395,7 @@ Tokens expire in 24 hours.
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "status": "error",
@@ -382,6 +404,7 @@ Tokens expire in 24 hours.
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "status": "error",
@@ -390,6 +413,7 @@ Tokens expire in 24 hours.
 ```
 
 ### 409 Conflict
+
 ```json
 {
   "status": "error",
@@ -398,6 +422,7 @@ Tokens expire in 24 hours.
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "status": "error",
@@ -410,17 +435,21 @@ Tokens expire in 24 hours.
 ## Authentication & Authorization
 
 ### User Roles
+
 1. **super_admin**: Full system access, can manage all tenants
 2. **tenant_admin**: Can manage tenant settings and users
 3. **user**: Can view/edit projects and tasks within tenant
 
 ### Tenant Isolation
+
 All data is automatically scoped to tenant. Users can only access:
+
 - Their own tenant's data
 - Resources they have permission for
 - All queries enforced with `tenantId` filtering
 
 ### Subscription Limits
+
 - **Free Plan**: max 10 users, 5 projects
 - **Pro Plan**: max 50 users, 20 projects
 - **Enterprise**: Unlimited
