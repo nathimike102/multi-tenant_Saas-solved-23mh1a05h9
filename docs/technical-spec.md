@@ -206,6 +206,7 @@ frontend/
 - **Git**: v2.x or higher
 
 Verify installations:
+
 ```bash
 node --version   # Should show v18.x or v20.x
 npm --version    # Should show v9.x+
@@ -280,12 +281,14 @@ VITE_ENABLE_ANALYTICS=false
 #### Option 1: Using Docker Compose (Recommended)
 
 1. **Clone the repository**:
+
 ```bash
 git clone <repository-url>
 cd SaaS
 ```
 
 2. **Create environment files**:
+
 ```bash
 # Backend
 cp backend/.env.example backend/.env
@@ -294,11 +297,13 @@ cp frontend/.env.example frontend/.env
 ```
 
 3. **Start all services**:
+
 ```bash
 docker compose up --build
 ```
 
 This will:
+
 - Build backend and frontend Docker images
 - Start PostgreSQL container
 - Run database migrations
@@ -307,6 +312,7 @@ This will:
 - Start frontend dev server on port 3000
 
 4. **Access the application**:
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000
 - Database: localhost:5432
@@ -314,12 +320,14 @@ This will:
 #### Option 2: Local Development (Without Docker)
 
 1. **Clone the repository**:
+
 ```bash
 git clone <repository-url>
 cd SaaS
 ```
 
 2. **Install PostgreSQL locally** (if not using Docker for DB only):
+
 ```bash
 # macOS (Homebrew)
 brew install postgresql@15
@@ -332,6 +340,7 @@ sudo systemctl start postgresql
 ```
 
 3. **Create database**:
+
 ```bash
 psql -U postgres
 CREATE DATABASE saas_db;
@@ -339,6 +348,7 @@ CREATE DATABASE saas_db;
 ```
 
 4. **Setup Backend**:
+
 ```bash
 cd backend
 npm install
@@ -357,6 +367,7 @@ npm run dev
 ```
 
 5. **Setup Frontend** (in a new terminal):
+
 ```bash
 cd frontend
 npm install
@@ -392,6 +403,7 @@ docker compose up --build
 #### Using npm scripts
 
 **Backend:**
+
 ```bash
 cd backend
 
@@ -413,6 +425,7 @@ npm run db:reset
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 
@@ -481,16 +494,19 @@ npm run test:e2e
 For integration tests, use a separate test database:
 
 1. Create `.env.test` in backend:
+
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_test_db
 ```
 
 2. Create test database:
+
 ```bash
 psql -U postgres -c "CREATE DATABASE saas_test_db;"
 ```
 
 3. Run migrations on test DB:
+
 ```bash
 NODE_ENV=test npx prisma migrate deploy
 ```
@@ -607,24 +623,24 @@ npm run dev
 
 ## 3. Technology Stack Summary
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| **Frontend Framework** | React | 18.x |
-| **Build Tool** | Vite | 5.x |
-| **Routing** | React Router | 6.x |
-| **State Management** | React Query / Zustand | Latest |
-| **UI Framework** | Tailwind CSS | 3.x |
-| **Backend Framework** | Express.js | 4.x |
-| **Runtime** | Node.js | 18.x/20.x |
-| **Language** | JavaScript (ES6+) | Latest |
-| **Database** | PostgreSQL | 15.x |
-| **ORM** | Prisma | 5.x |
-| **Authentication** | JWT | jsonwebtoken |
-| **Password Hashing** | bcrypt | Latest |
-| **Validation** | Zod | Latest |
-| **Testing (Backend)** | Jest + Supertest | Latest |
-| **Testing (Frontend)** | Vitest + React Testing Library | Latest |
-| **Containerization** | Docker + Docker Compose | Latest |
+| Layer                  | Technology                     | Version      |
+| ---------------------- | ------------------------------ | ------------ |
+| **Frontend Framework** | React                          | 18.x         |
+| **Build Tool**         | Vite                           | 5.x          |
+| **Routing**            | React Router                   | 6.x          |
+| **State Management**   | React Query / Zustand          | Latest       |
+| **UI Framework**       | Tailwind CSS                   | 3.x          |
+| **Backend Framework**  | Express.js                     | 4.x          |
+| **Runtime**            | Node.js                        | 18.x/20.x    |
+| **Language**           | JavaScript (ES6+)              | Latest       |
+| **Database**           | PostgreSQL                     | 15.x         |
+| **ORM**                | Prisma                         | 5.x          |
+| **Authentication**     | JWT                            | jsonwebtoken |
+| **Password Hashing**   | bcrypt                         | Latest       |
+| **Validation**         | Zod                            | Latest       |
+| **Testing (Backend)**  | Jest + Supertest               | Latest       |
+| **Testing (Frontend)** | Vitest + React Testing Library | Latest       |
+| **Containerization**   | Docker + Docker Compose        | Latest       |
 
 ---
 
