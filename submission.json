@@ -1,8 +1,8 @@
 {
+  
   "project": {
-    "name": "Partnr SaaS Platform",
+    "name": "SaaS Platform",
     "description": "Multi-tenant SaaS platform for managing organizations, users, projects, and tasks",
-    "repository": "https://github.com/user/partnr-saas",
     "version": "1.0.0"
   },
   "deployment": {
