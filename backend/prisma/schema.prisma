@@ -93,7 +93,6 @@ model User {
   tenant          Tenant?    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   createdProjects Project[]  @relation("CreatedProjects")
   assignedTasks   Task[]     @relation("AssignedTasks")
-  createdTasks    Task[]     @relation("CreatedTasks")
   auditLogs       AuditLog[]
 
   // Constraints
@@ -141,7 +140,6 @@ model Task {
   status      TaskStatus   @default(todo)
   priority    TaskPriority @default(medium)
   assignedTo  String?      @map("assigned_to")
-  createdBy   String       @map("created_by")
   dueDate     DateTime?    @map("due_date") @db.Date
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
@@ -150,7 +148,6 @@ model Task {
   project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   assignee User?   @relation("AssignedTasks", fields: [assignedTo], references: [id], onDelete: SetNull)
-  creator  User    @relation("CreatedTasks", fields: [createdBy], references: [id], onDelete: Restrict)
 
   // Constraints
   @@index([tenantId, projectId])

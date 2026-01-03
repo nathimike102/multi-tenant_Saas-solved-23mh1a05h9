@@ -14,7 +14,7 @@ const apiRoutes = require('./routes');
 const app = express();
 
 // Middleware setup - CORS with environment variable
-const corsOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+const corsOrigin = process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:5173'];
 app.use(cors({
   origin: corsOrigin,
   credentials: true,
