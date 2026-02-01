@@ -131,6 +131,53 @@ class UserService {
 
     return { success: true };
   }
+
+  /**
+   * List all users (Super Admin)
+   */
+  async listAllUsers(page = 1, limit = 50, filters = {}) {
+    const skip = (page - 1) * limit;
+    const where = {};
+
+    if (filters.role) where.role = filters.role;
+    if (filters.tenantId) where.tenantId = filters.tenantId;
+    if (filters.search) {
+      where.OR = [
+        { email: { contains: filters.search, mode: 'insensitive' } },
+        { fullName: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      db.prisma.user.findMany({
+        where,
+        skip,
+        take: limit,
+        include: { tenant: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      db.prisma.user.count({ where }),
+    ]);
+
+    return {
+      users: users.map((u) => ({
+        id: u.id,
+        email: u.email,
+        fullName: u.fullName,
+        role: u.role,
+        isActive: u.isActive,
+        tenantId: u.tenantId,
+        tenantName: u.tenant?.name,
+        createdAt: u.createdAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+      total,
+    };
+  }
 }
 
 module.exports = new UserService();

@@ -15,19 +15,25 @@ class AuthService {
     // Check if subdomain already exists
     const existingTenant = await tenantRepository.findBySubdomain(subdomain);
     if (existingTenant) {
-      throw new Error('SUBDOMAIN_EXISTS', { statusCode: 409 });
+      const error = new Error('SUBDOMAIN_EXISTS');
+      error.statusCode = 409;
+      throw error;
     }
 
     // Check if admin email already exists globally
     const existingUser = await userRepository.findByEmail(adminEmail);
     if (existingUser) {
-      throw new Error('EMAIL_EXISTS', { statusCode: 409 });
+      const error = new Error('EMAIL_EXISTS');
+      error.statusCode = 409;
+      throw error;
     }
 
     // Validate password strength
     const passwordValidation = passwordUtils.validatePasswordStrength(adminPassword);
     if (!passwordValidation.isValid) {
-      throw new Error(`PASSWORD_WEAK: ${passwordValidation.errors.join(', ')}`, { statusCode: 400 });
+      const error = new Error(`PASSWORD_WEAK: ${passwordValidation.errors.join(', ')}`);
+      error.statusCode = 400;
+      throw error;
     }
 
     // Transaction: create tenant + admin user
@@ -93,16 +99,22 @@ class AuthService {
     const user = await userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error('INVALID_CREDENTIALS', { statusCode: 401 });
+      const error = new Error('INVALID_CREDENTIALS');
+      error.statusCode = 401;
+      throw error;
     }
 
     const isPasswordValid = await passwordUtils.comparePassword(password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new Error('INVALID_CREDENTIALS', { statusCode: 401 });
+      const error = new Error('INVALID_CREDENTIALS');
+      error.statusCode = 401;
+      throw error;
     }
 
     if (!user.isActive) {
-      throw new Error('USER_INACTIVE', { statusCode: 403 });
+      const error = new Error('USER_INACTIVE');
+      error.statusCode = 403;
+      throw error;
     }
 
     const token = jwtUtils.generateToken({

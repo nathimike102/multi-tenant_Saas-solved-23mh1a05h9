@@ -1,4 +1,4 @@
-# Partnr SaaS Platform - AI Coding Agent Instructions
+# Nathi SaaS Platform - AI Coding Agent Instructions
 
 ## Architecture Overview
 

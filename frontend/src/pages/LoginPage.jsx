@@ -15,14 +15,44 @@ const schema = z.object({
 const PasswordInput = forwardRef(({ ...props }, ref) => {
   const [show, setShow] = useState(false);
   return (
-    <div style={{ position: 'relative', marginTop: 12 }}>
-      <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd' }}>
-        <span style={{ padding: '0 12px', fontSize: 18 }}>🔒</span>
-        <input ref={ref} type={show ? 'text' : 'password'} {...props} placeholder="••••••••" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
-        <button type="button" onClick={(e) => { e.preventDefault(); setShow((s) => !s); }} style={{ padding: '0 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}>
-          {show ? '👁️' : '😴'}
-        </button>
-      </div>
+    <div style={{ position: 'relative' }}>
+      <input
+        ref={ref}
+        type={show ? 'text' : 'password'}
+        {...props}
+        placeholder="••••••••"
+        style={{
+          width: '100%',
+          padding: '0.75rem 1rem 0.75rem 2.5rem',
+          border: '1px solid var(--border)',
+          borderRadius: '0.5rem',
+          fontSize: '1rem',
+          outline: 'none',
+          transition: 'all 0.2s',
+        }}
+        onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
+        onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
+      />
+      <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontSize: '1.25rem' }}>🔒</span>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          setShow((s) => !s);
+        }}
+        style={{
+          position: 'absolute',
+          right: '1rem',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '1rem',
+        }}
+      >
+        {show ? '👁️' : '�'}
+      </button>
     </div>
   );
 });
@@ -56,77 +86,109 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #d4a574 0%, #d4a574 20%, #e8959a 40%, #d4689e 60%, #8b5fb5 80%, #4a5ba8 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-    }}>
-      <div style={{ maxWidth: 420, width: '100%', background: '#fff', padding: 40, borderRadius: 12, boxShadow: '0 10px 40px rgba(0,0,0,0.2)' }}>
-        {/* User Icon */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ width: 80, height: 80, background: 'linear-gradient(135deg, #d4a574, #e8959a)', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>
-            👤
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--bg-primary)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+      }}
+    >
+      <div style={{ maxWidth: '440px', width: '100%', background: 'var(--bg-secondary)', padding: '2.5rem', borderRadius: '0.75rem', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--border)' }}>
+        {/* Logo/Icon */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div
+            style={{
+              width: '5rem',
+              height: '5rem',
+              background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+              borderRadius: '50%',
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '2.5rem',
+            }}
+          >
+            🚀
           </div>
         </div>
 
-        <h1 style={{ textAlign: 'center', fontSize: 28, marginBottom: 8 }}>Welcome back</h1>
-        <p style={{ textAlign: 'center', color: '#666', marginBottom: 24 }}>Sign in to continue</p>
+        <h1 style={{ textAlign: 'center', fontSize: '1.75rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Welcome back</h1>
+        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Sign in to your account</p>
 
-        {serverError && (
-          <div style={{ background: '#ffe3e3', padding: 12, borderRadius: 6, marginBottom: 16, color: '#d00', fontSize: 14 }}>{serverError}</div>
-        )}
+        {serverError && <div className="error">{serverError}</div>}
 
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Email Field */}
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginBottom: 4 }}>
-            <span style={{ padding: '0 12px', fontSize: 18 }}>👤</span>
-            <input type="email" {...register('email')} placeholder="Email address" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>Email</label>
+            <input type="email" {...register('email')} placeholder="you@example.com" />
+            {errors.email && <span className="text-danger text-small" style={{ marginTop: '0.25rem' }}>{errors.email.message}</span>}
           </div>
-          {errors.email && <span style={{ color: '#d00', fontSize: 12 }}>{errors.email.message}</span>}
 
           {/* Password Field */}
-          <PasswordInput {...register('password')} />
-          {errors.password && <span style={{ color: '#d00', fontSize: 12 }}>{errors.password.message}</span>}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>Password</label>
+            <PasswordInput {...register('password')} />
+            {errors.password && <span className="text-danger text-small" style={{ marginTop: '0.25rem' }}>{errors.password.message}</span>}
+          </div>
 
           {/* Subdomain Field */}
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginTop: 12 }}>
-            <span style={{ padding: '0 12px', fontSize: 18 }}>🏢</span>
-            <input {...register('subdomain')} placeholder="Tenant subdomain" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>Tenant Subdomain</label>
+            <input {...register('subdomain')} placeholder="demo" />
+            {errors.subdomain && <span className="text-danger text-small" style={{ marginTop: '0.25rem' }}>{errors.subdomain.message}</span>}
           </div>
-          {errors.subdomain && <span style={{ color: '#d00', fontSize: 12 }}>{errors.subdomain.message}</span>}
 
-          {/* Remember & Forgot */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, marginBottom: 20 }}>
-            <label style={{ display: 'flex', gap: 6, alignItems: 'center', cursor: 'pointer' }}>
-              <input type="checkbox" {...register('remember')} />
-              <span style={{ fontSize: 14 }}>Remember me</span>
+          {/* Remember Me */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+            <input
+              type="checkbox"
+              {...register('remember')}
+              id="remember"
+              style={{
+                width: '1rem',
+                height: '1rem',
+                cursor: 'pointer',
+                accentColor: 'var(--primary)',
+              }}
+            />
+            <label htmlFor="remember" style={{ marginLeft: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+              Remember me
             </label>
-            <Link to="#" style={{ fontSize: 14, color: '#d4689e', textDecoration: 'none' }}>Forgot Password?</Link>
           </div>
 
-          {/* Login Button */}
-          <button type="submit" disabled={loading} style={{
-            width: '100%',
-            padding: '14px',
-            background: 'linear-gradient(135deg, #d4a574, #e8959a)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            fontSize: 16,
-            fontWeight: 600,
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1,
-          }}>
-            {loading ? 'Signing in…' : 'LOGIN'}
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary btn-full"
+            style={{
+              marginBottom: '1rem',
+              opacity: loading ? '0.7' : '1',
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        {/* Sign Up Link */}
-        <div style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: '#666' }}>
-          New here? <Link to="/register" style={{ color: '#d4689e', textDecoration: 'none', fontWeight: 600 }}>Create an organization</Link>
+        {/* Divider */}
+        <div style={{ textAlign: 'center', margin: '1.5rem 0', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+          Don't have an account?{' '}
+          <Link to="/register" style={{ color: 'var(--primary)', fontWeight: '600' }}>
+            Create one
+          </Link>
+        </div>
+
+        {/* Demo Credentials */}
+        <div style={{ background: 'var(--bg-tertiary)', padding: '1rem', borderRadius: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>
+          <strong style={{ color: 'var(--text)' }}>Demo Credentials:</strong>
+          <br />
+          Email: admin@demo.com | Pass: Demo@123 | Subdomain: demo
         </div>
       </div>
     </div>

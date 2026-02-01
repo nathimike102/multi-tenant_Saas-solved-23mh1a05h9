@@ -101,42 +101,42 @@ export default function ProjectDetailsPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <button onClick={() => navigate('/projects')} style={{ marginBottom: 12, padding: '6px 10px', background: '#eee', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
+        <button onClick={() => navigate('/projects')} style={{ marginBottom: 12, padding: '6px 10px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: 4, cursor: 'pointer', color: 'var(--text)' }}>
           ← Back to Projects
         </button>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
           <div>
-            <h1>{project.name}</h1>
-            <p style={{ color: '#666', marginBottom: 8 }}>{project.description}</p>
-            <div style={{ display: 'flex', gap: 12, fontSize: 14 }}>
+            <h1 style={{ color: 'var(--text)' }}>{project.name}</h1>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 8 }}>{project.description}</p>
+            <div style={{ display: 'flex', gap: 12, fontSize: 14, color: 'var(--text)' }}>
               <span><strong>Status:</strong> {project.status}</span>
               <span><strong>Created:</strong> {new Date(project.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
-          <button onClick={handleDeleteProject} style={{ padding: '8px 12px', background: '#fee', border: '1px solid #faa', borderRadius: 6, cursor: 'pointer', color: '#d00' }}>
+          <button onClick={handleDeleteProject} style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 6, cursor: 'pointer', color: '#ef4444' }}>
             Delete Project
           </button>
         </div>
       </div>
 
-      <hr style={{ margin: '20px 0' }} />
+      <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid var(--border)' }} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h2>Tasks ({filteredTasks.length})</h2>
-        <button onClick={() => setShowTaskModal(true)} style={{ padding: '8px 12px', background: '#111', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
+        <h2 style={{ color: 'var(--text)' }}>Tasks ({filteredTasks.length})</h2>
+        <button onClick={() => setShowTaskModal(true)} style={{ padding: '8px 12px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
           + New Task
         </button>
       </div>
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6 }}>
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg-tertiary)', color: 'var(--text)' }}>
           <option value="">All Status</option>
           <option value="todo">Todo</option>
           <option value="in_progress">In Progress</option>
           <option value="review">Review</option>
           <option value="done">Done</option>
         </select>
-        <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} style={{ padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6 }}>
+        <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} style={{ padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg-tertiary)', color: 'var(--text)' }}>
           <option value="">All Priority</option>
           <option value="low">Low</option>
           <option value="medium">Medium</option>
@@ -145,28 +145,28 @@ export default function ProjectDetailsPage() {
       </div>
 
       {filteredTasks.length === 0 ? (
-        <p style={{ color: '#999' }}>No tasks. Create one to get started.</p>
+        <p style={{ color: 'var(--text-muted)' }}>No tasks. Create one to get started.</p>
       ) : (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #ddd' }}>
-              <th style={{ textAlign: 'left', padding: 8 }}>Title</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Status</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Priority</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Assigned To</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Due Date</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Actions</th>
+            <tr style={{ borderBottom: '2px solid var(--border)' }}>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Title</th>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Status</th>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Priority</th>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Assigned To</th>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Due Date</th>
+              <th style={{ textAlign: 'left', padding: 8, color: 'var(--text)' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredTasks.map((task) => (
-              <tr key={task.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}>{task.title}</td>
+              <tr key={task.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: 8, color: 'var(--text)' }}>{task.title}</td>
                 <td style={{ padding: 8 }}>
                   <select
                     value={task.status}
                     onChange={(e) => handleUpdateTaskStatus(task.id, e.target.value)}
-                    style={{ padding: '4px 8px', border: '1px solid #ddd', borderRadius: 4, background: '#fff' }}
+                    style={{ padding: '4px 8px', border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-tertiary)', color: 'var(--text)' }}
                   >
                     <option value="todo">Todo</option>
                     <option value="in_progress">In Progress</option>
@@ -175,14 +175,14 @@ export default function ProjectDetailsPage() {
                   </select>
                 </td>
                 <td style={{ padding: 8 }}>
-                  <span style={{ padding: '2px 8px', borderRadius: 4, background: task.priority === 'high' ? '#fee' : task.priority === 'medium' ? '#fef3cd' : '#f0f0f0', fontSize: 12 }}>
+                  <span style={{ padding: '2px 8px', borderRadius: 4, background: task.priority === 'high' ? 'rgba(239, 68, 68, 0.1)' : task.priority === 'medium' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(156, 163, 175, 0.1)', color: task.priority === 'high' ? '#ef4444' : task.priority === 'medium' ? '#f59e0b' : '#9ca3af', fontSize: 12 }}>
                     {task.priority}
                   </span>
                 </td>
-                <td style={{ padding: 8, fontSize: 14 }}>{task.assignedTo?.fullName || '—'}</td>
-                <td style={{ padding: 8, fontSize: 14, color: '#666' }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '—'}</td>
+                <td style={{ padding: 8, fontSize: 14, color: 'var(--text)' }}>{task.assignedTo?.fullName || '—'}</td>
+                <td style={{ padding: 8, fontSize: 14, color: 'var(--text-muted)' }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '—'}</td>
                 <td style={{ padding: 8 }}>
-                  <button onClick={() => handleDeleteTask(task.id)} style={{ padding: '4px 8px', background: '#fee', border: '1px solid #faa', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>
+                  <button onClick={() => handleDeleteTask(task.id)} style={{ padding: '4px 8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 4, cursor: 'pointer', fontSize: 12, color: '#ef4444' }}>
                     Delete
                   </button>
                 </td>

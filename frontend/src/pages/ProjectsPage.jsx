@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { Link } from 'react-router-dom';
 import client from '../api/client.js';
 import ProjectModal from '../components/ProjectModal.jsx';
 
@@ -50,64 +51,87 @@ export default function ProjectsPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading">Loading projects...</div>;
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+      <div className="flex-between mb-6">
         <h1>Projects</h1>
-        <button onClick={() => setShowModal(true)} style={{ padding: '8px 12px', background: '#111', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
+        <button onClick={() => setShowModal(true)} className="btn btn-primary">
           + New Project
         </button>
       </div>
 
-      {error && <div style={{ color: '#d00', marginBottom: 12 }}>{error}</div>}
+      {error && <div className="error">{error}</div>}
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1, padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6 }}
-        />
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6 }}>
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="archived">Archived</option>
-          <option value="completed">Completed</option>
-        </select>
+      {/* Filters */}
+      <div className="card mb-6">
+        <div className="grid grid-2" style={{ gap: '1rem' }}>
+          <div>
+            <label>Search</label>
+            <input
+              type="text"
+              placeholder="Search by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Status</label>
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {projects.length === 0 ? (
-        <p style={{ color: '#999' }}>No projects. Create one to get started.</p>
+        <div className="card text-center" style={{ padding: '3rem' }}>
+          <p className="text-muted">No projects. Create one to get started.</p>
+        </div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #ddd' }}>
-              <th style={{ textAlign: 'left', padding: 8 }}>Name</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Status</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Tasks</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Created</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map((p) => (
-              <tr key={p.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}><a href={`/projects/${p.id}`} style={{ color: '#111', textDecoration: 'none' }}>{p.name}</a></td>
-                <td style={{ padding: 8 }}>{p.status}</td>
-                <td style={{ padding: 8 }}>{p.taskCount || 0}</td>
-                <td style={{ padding: 8, fontSize: 12, color: '#666' }}>{new Date(p.createdAt).toLocaleDateString()}</td>
-                <td style={{ padding: 8 }}>
-                  <button onClick={() => handleDelete(p.id)} style={{ padding: '4px 8px', background: '#fee', border: '1px solid #faa', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>
-                    Delete
-                  </button>
-                </td>
+        <div className="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Tasks</th>
+                <th>Created</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {projects.map((p) => (
+                <tr key={p.id}>
+                  <td style={{ fontWeight: '500' }}>
+                    <Link to={`/projects/${p.id}`} style={{ color: 'var(--primary)' }}>
+                      {p.name}
+                    </Link>
+                  </td>
+                  <td>
+                    <span className={`badge badge-${p.status === 'active' ? 'success' : 'info'}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <td>{p.taskCount || 0}</td>
+                  <td className="text-small text-muted">{new Date(p.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      className="btn btn-danger btn-small"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {showModal && <ProjectModal onSave={handleSave} onClose={() => setShowModal(false)} />}

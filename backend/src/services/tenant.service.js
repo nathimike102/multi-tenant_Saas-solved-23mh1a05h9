@@ -69,7 +69,7 @@ class TenantService {
     const list = await tenantRepository.listAll(page, limit, filters);
 
     return {
-      tenants: list.tenants.map((t) => ({
+      tenants: list.data.map((t) => ({
         id: t.id,
         name: t.name,
         subdomain: t.subdomain,
@@ -77,9 +77,11 @@ class TenantService {
         subscriptionPlan: t.subscriptionPlan,
         maxUsers: t.maxUsers,
         maxProjects: t.maxProjects,
+        userCount: t.totalUsers,
+        projectCount: t.totalProjects,
       })),
       pagination: list.pagination,
-      total: list.total,
+      total: list.pagination.totalTenants,
     };
   }
 }

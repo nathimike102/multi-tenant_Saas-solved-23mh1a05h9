@@ -32,9 +32,9 @@ const PasswordInput = forwardRef(({ ...props }, ref) => {
   const [show, setShow] = useState(false);
   return (
     <div style={{ position: 'relative', marginTop: 12 }}>
-      <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd' }}>
+      <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 6, border: '1px solid var(--border)' }}>
         <span style={{ padding: '0 12px', fontSize: 18 }}>🔒</span>
-        <input ref={ref} type={show ? 'text' : 'password'} {...props} placeholder="••••••••" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+        <input ref={ref} type={show ? 'text' : 'password'} {...props} placeholder="••••••••" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none', background: 'transparent', color: 'var(--text)' }} />
         <button type="button" onClick={(e) => { e.preventDefault(); setShow((s) => !s); }} style={{ padding: '0 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}>
           {show ? '👁️' : '😴'}
         </button>
@@ -81,68 +81,68 @@ export default function RegisterPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #d4a574 0%, #d4a574 20%, #e8959a 40%, #d4689e 60%, #8b5fb5 80%, #4a5ba8 100%)',
+      background: 'var(--bg-primary)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px',
     }}>
-      <div style={{ maxWidth: 480, width: '100%', background: '#fff', padding: 40, borderRadius: 12, boxShadow: '0 10px 40px rgba(0,0,0,0.2)' }}>
+      <div style={{ maxWidth: 480, width: '100%', background: 'var(--bg-secondary)', padding: 40, borderRadius: 12, boxShadow: 'var(--shadow)', border: '1px solid var(--border)' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ width: 80, height: 80, background: 'linear-gradient(135deg, #d4a574, #e8959a)', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>
+          <div style={{ width: 80, height: 80, background: 'var(--primary)', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>
             🏢
           </div>
         </div>
 
-        <h1 style={{ textAlign: 'center', fontSize: 28, marginBottom: 8 }}>Create your organization</h1>
-        <p style={{ textAlign: 'center', color: '#666', marginBottom: 24 }}>Register your tenant and admin account.</p>
+        <h1 style={{ textAlign: 'center', fontSize: 28, marginBottom: 8, color: 'var(--text)' }}>Create your organization</h1>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: 24 }}>Register your tenant and admin account.</p>
 
         {serverError && (
-          <div style={{ background: '#ffe3e3', padding: 12, borderRadius: 6, marginBottom: 16, color: '#d00', fontSize: 14 }}>{serverError}</div>
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: 12, borderRadius: 6, marginBottom: 16, color: '#ef4444', fontSize: 14, border: '1px solid rgba(239, 68, 68, 0.3)' }}>{serverError}</div>
         )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginBottom: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 6, border: '1px solid var(--border)', marginBottom: 4 }}>
             <span style={{ padding: '0 12px', fontSize: 18 }}>🏢</span>
-            <input {...register('tenantName')} placeholder="Organization Name" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+            <input {...register('tenantName')} placeholder="Organization Name" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none', background: 'transparent', color: 'var(--text)' }} />
           </div>
-          {errors.tenantName && <span style={{ color: '#d00', fontSize: 12 }}>{errors.tenantName.message}</span>}
+          {errors.tenantName && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.tenantName.message}</span>}
 
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginTop: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 6, border: '1px solid var(--border)', marginTop: 12 }}>
             <span style={{ padding: '0 12px', fontSize: 18 }}>🌐</span>
-            <input {...register('subdomain')} placeholder="your-company" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+            <input {...register('subdomain')} placeholder="your-company" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none', background: 'transparent', color: 'var(--text)' }} />
           </div>
-          <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>Preview: {sub || 'your-company'}.yourapp.com</div>
-          {errors.subdomain && <span style={{ color: '#d00', fontSize: 12 }}>{errors.subdomain.message}</span>}
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Preview: {sub || 'your-company'}.yourapp.com</div>
+          {errors.subdomain && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.subdomain.message}</span>}
 
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginTop: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 6, border: '1px solid var(--border)', marginTop: 12 }}>
             <span style={{ padding: '0 12px', fontSize: 18 }}>📧</span>
-            <input type="email" {...register('adminEmail')} placeholder="Admin Email" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+            <input type="email" {...register('adminEmail')} placeholder="Admin Email" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none', background: 'transparent', color: 'var(--text)' }} />
           </div>
-          {errors.adminEmail && <span style={{ color: '#d00', fontSize: 12 }}>{errors.adminEmail.message}</span>}
+          {errors.adminEmail && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.adminEmail.message}</span>}
 
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 6, border: '1px solid #ddd', marginTop: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-tertiary)', borderRadius: 6, border: '1px solid var(--border)', marginTop: 12 }}>
             <span style={{ padding: '0 12px', fontSize: 18 }}>👤</span>
-            <input {...register('adminFullName')} placeholder="Admin Full Name" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none' }} />
+            <input {...register('adminFullName')} placeholder="Admin Full Name" style={{ flex: 1, border: 'none', padding: '12px 0', outline: 'none', background: 'transparent', color: 'var(--text)' }} />
           </div>
-          {errors.adminFullName && <span style={{ color: '#d00', fontSize: 12 }}>{errors.adminFullName.message}</span>}
+          {errors.adminFullName && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.adminFullName.message}</span>}
 
           <PasswordInput {...register('password')} />
-          {errors.password && <span style={{ color: '#d00', fontSize: 12 }}>{errors.password.message}</span>}
+          {errors.password && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.password.message}</span>}
 
           <PasswordInput {...register('confirmPassword')} />
-          {errors.confirmPassword && <span style={{ color: '#d00', fontSize: 12 }}>{errors.confirmPassword.message}</span>}
+          {errors.confirmPassword && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.confirmPassword.message}</span>}
 
           <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 16, marginBottom: 20, cursor: 'pointer' }}>
             <input type="checkbox" {...register('terms')} />
-            <span style={{ fontSize: 14 }}>I agree to the Terms & Conditions</span>
+            <span style={{ fontSize: 14, color: 'var(--text)' }}>I agree to the Terms & Conditions</span>
           </label>
-          {errors.terms && <span style={{ color: '#d00', fontSize: 12 }}>{errors.terms.message}</span>}
+          {errors.terms && <span style={{ color: '#ef4444', fontSize: 12 }}>{errors.terms.message}</span>}
 
           <button type="submit" disabled={loading} style={{
             width: '100%',
             padding: '14px',
-            background: 'linear-gradient(135deg, #d4a574, #e8959a)',
+            background: 'var(--primary)',
             color: '#fff',
             border: 'none',
             borderRadius: 6,
@@ -155,8 +155,8 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: '#666' }}>
-          Already have an account? <Link to="/login" style={{ color: '#d4689e', textDecoration: 'none', fontWeight: 600 }}>Log in</Link>
+        <div style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: 'var(--text-muted)' }}>
+          Already have an account? <Link to="/login" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>Log in</Link>
         </div>
       </div>
     </div>

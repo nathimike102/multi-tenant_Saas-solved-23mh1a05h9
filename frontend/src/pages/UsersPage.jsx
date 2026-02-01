@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
-import client from '../api/client';
-import UserModal from '../components/UserModal';
+import { useAuth } from '../auth/AuthContext.jsx';
+import client from '../api/client.js';
+import UserModal from '../components/UserModal.jsx';
+import AccessDenied from '../components/AccessDenied.jsx';
 
 export default function UsersPage() {
   const { user } = useAuth();
@@ -11,13 +12,18 @@ export default function UsersPage() {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
 
+  // Users visible to: tenant_admin and super_admin
+  if (user?.role === 'user') {
+    return <AccessDenied requiredRoles={['tenant_admin', 'super_admin']} />;
+  }
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const res = await client.get(`/tenants/${user?.tenantId}/users`, {
         params: { search, limit: 100 },
       });
-      setUsers(res.data.data.users || []);
+      setUsers(res.data?.data?.users || []);
     } catch (e) {
       setError(e?.response?.data?.message || 'Failed to load users');
     } finally {
@@ -49,64 +55,67 @@ export default function UsersPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading">Loading users...</div>;
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+      <div className="flex-between mb-6">
         <h1>Users</h1>
-        <button onClick={() => setShowModal(true)} style={{ padding: '8px 12px', background: '#111', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
+        <button onClick={() => setShowModal(true)} className="btn btn-primary">
           + Invite User
         </button>
       </div>
 
-      {error && <div style={{ color: '#d00', marginBottom: 12 }}>{error}</div>}
+      {error && <div className="error">{error}</div>}
 
-      <div style={{ marginBottom: 16 }}>
+      <div className="card mb-6">
         <input
           type="text"
           placeholder="Search by name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ width: '100%', maxWidth: 300, padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6 }}
         />
       </div>
 
       {users.length === 0 ? (
-        <p style={{ color: '#999' }}>No users. Invite team members to get started.</p>
+        <div className="card text-center" style={{ padding: '3rem' }}>
+          <p className="text-muted">No users. Invite team members to get started.</p>
+        </div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #ddd' }}>
-              <th style={{ textAlign: 'left', padding: 8 }}>Name</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Email</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Role</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Joined</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}>{u.fullName}</td>
-                <td style={{ padding: 8 }}>{u.email}</td>
-                <td style={{ padding: 8 }}>
-                  <span style={{ padding: '2px 8px', borderRadius: 4, background: u.role === 'super_admin' ? '#e3f2fd' : u.role === 'tenant_admin' ? '#f3e5f5' : '#f5f5f5', fontSize: 12 }}>
-                    {u.role.replace('_', ' ')}
-                  </span>
-                </td>
-                <td style={{ padding: 8, fontSize: 12, color: '#666' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
-                <td style={{ padding: 8 }}>
-                  {u.id !== user?.id && (
-                    <button onClick={() => handleDelete(u.id)} style={{ padding: '4px 8px', background: '#fee', border: '1px solid #faa', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>
+        <div className="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id}>
+                  <td style={{ fontWeight: '500' }}>{u.fullName}</td>
+                  <td>{u.email}</td>
+                  <td>
+                    <span className="badge badge-primary">{u.role}</span>
+                  </td>
+                  <td>
+                    <span className={`badge badge-${u.isActive ? 'success' : 'danger'}`}>
+                      {u.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td>
+                    <button onClick={() => handleDelete(u.id)} className="btn btn-danger btn-small">
                       Remove
                     </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {showModal && <UserModal onSave={handleSave} onClose={() => setShowModal(false)} />}

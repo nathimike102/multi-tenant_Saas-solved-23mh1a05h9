@@ -3,7 +3,7 @@
 
 cd "/home/ghost/Desktop/Partnr tasks/SaaS"
 
-echo "🐳 Starting Partnr SaaS Docker services..."
+echo "🐳 Starting Nathi SaaS Docker services..."
 
 # Create network
 docker network create saas-network 2>/dev/null || true

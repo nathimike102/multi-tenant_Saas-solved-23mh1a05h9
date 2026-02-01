@@ -1,4 +1,4 @@
-# Partnr SaaS Platform
+# Nathi SaaS Platform
 
 A comprehensive multi-tenant SaaS application for managing organizations, users, projects, and tasks with role-based access control.
 
@@ -58,7 +58,7 @@ A modern SaaS platform designed to enable organizations to manage their operatio
 ### Multi-Tenancy Approach
 
 - **Data Isolation**: Each tenant's data is completely isolated using `tenant_id` filtering
-- **Subdomain-Based Access**: Each tenant is assigned a unique subdomain (e.g., `demo.partnr.local`)
+- **Subdomain-Based Access**: Each tenant is assigned a unique subdomain (e.g., `demo.nathi.local`)
 - **Role-Based Authorization**: Access control enforced at the API middleware level
 - **Resource Limits**: Subscriptions define max users and projects per tenant
 
@@ -86,7 +86,6 @@ A modern SaaS platform designed to enable organizations to manage their operatio
    ```
 
 3. **Access the application**
-
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:5000
    - Database: localhost:5432
@@ -102,7 +101,7 @@ A modern SaaS platform designed to enable organizations to manage their operatio
 
    ```bash
    git clone <repository-url>
-   cd partnr-saas
+   cd nathi-saas
    ```
 
 2. **Setup Backend**
@@ -198,7 +197,7 @@ docker-compose logs       # View logs
 ## 📝 Project Structure
 
 ```
-partnr-saas/
+nathi-saas/
 ├── backend/                  # Express API
 │   ├── src/
 │   │   ├── controllers/     # Request handlers

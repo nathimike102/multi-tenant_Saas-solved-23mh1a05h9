@@ -61,6 +61,26 @@ class UserController {
       next(error);
     }
   }
+
+  /**
+   * List All Users (Super Admin)
+   * GET /api/admin/users
+   */
+  static async listAllUsers(req, res, next) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 50;
+      const filters = {
+        role: req.query.role,
+        tenantId: req.query.tenantId,
+        search: req.query.search,
+      };
+      const result = await userService.listAllUsers(page, limit, filters);
+      sendSuccess(res, result, 'All users retrieved successfully', 200);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = UserController;

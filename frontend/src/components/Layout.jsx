@@ -5,7 +5,7 @@ export default function Layout() {
   return (
     <div>
       <Navbar />
-      <main style={{ padding: 16, maxWidth: 1200, margin: '0 auto' }}>
+      <main className="container" style={{ padding: '2rem 1.5rem', marginTop: '1rem' }}>
         <Outlet />
       </main>
     </div>

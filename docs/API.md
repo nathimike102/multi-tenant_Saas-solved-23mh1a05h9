@@ -1,6 +1,6 @@
-# Partnr SaaS API Documentation
+# Nathi SaaS API Documentation
 
-Complete REST API reference for the Partnr SaaS platform.
+Complete REST API reference for the Nathi SaaS platform.
 
 **Base URL**: `http://localhost:5000/api`
 
@@ -31,6 +31,7 @@ Authorization: Bearer <your_jwt_token>
 ### JWT Token Structure
 
 **Payload**:
+
 ```json
 {
   "userId": "uuid",
@@ -82,6 +83,7 @@ Check system health and database connectivity.
 **Authentication**: Not required
 
 **Response**:
+
 ```json
 {
   "status": "ok",
@@ -91,6 +93,7 @@ Check system health and database connectivity.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/health
 ```
@@ -106,6 +109,7 @@ Register a new user account.
 **Authentication**: Not required
 
 **Request Body**:
+
 ```json
 {
   "email": "user@example.com",
@@ -118,6 +122,7 @@ Register a new user account.
 ```
 
 **Validation Rules**:
+
 - Email: Valid email format required
 - Password: Minimum 8 characters, at least one uppercase, one lowercase, one number, one special character
 - firstName: Non-empty string
@@ -126,6 +131,7 @@ Register a new user account.
 - tenantSlug: Unique, lowercase alphanumeric with hyphens
 
 **Response** (201 Created):
+
 ```json
 {
   "message": "Registration successful",
@@ -141,10 +147,12 @@ Register a new user account.
 ```
 
 **Errors**:
+
 - `400 Bad Request` - Invalid email format or weak password
 - `409 Conflict` - Email or tenant slug already exists
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -167,6 +175,7 @@ Authenticate user and receive JWT token.
 **Authentication**: Not required
 
 **Request Body**:
+
 ```json
 {
   "email": "user@example.com",
@@ -175,6 +184,7 @@ Authenticate user and receive JWT token.
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "Login successful",
@@ -191,10 +201,12 @@ Authenticate user and receive JWT token.
 ```
 
 **Errors**:
+
 - `401 Unauthorized` - Invalid email or password
 - `400 Bad Request` - Missing required fields
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -213,6 +225,7 @@ Logout current user (client-side implementation recommended).
 **Authentication**: Required
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "Logout successful"
@@ -220,6 +233,7 @@ Logout current user (client-side implementation recommended).
 ```
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/logout \
   -H "Authorization: Bearer <token>"
@@ -234,6 +248,7 @@ Get current authenticated user information.
 **Authentication**: Required
 
 **Response** (200 OK):
+
 ```json
 {
   "user": {
@@ -249,6 +264,7 @@ Get current authenticated user information.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/auth/me \
   -H "Authorization: Bearer <token>"
@@ -265,10 +281,12 @@ List all tenants (SUPER_ADMIN only).
 **Authentication**: Required (SUPER_ADMIN role)
 
 **Query Parameters**:
+
 - `page` (integer): Page number (default: 1)
 - `limit` (integer): Items per page (default: 10)
 
 **Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -292,6 +310,7 @@ List all tenants (SUPER_ADMIN only).
 ```
 
 **Example**:
+
 ```bash
 curl "http://localhost:5000/api/tenants?page=1&limit=10" \
   -H "Authorization: Bearer <token>"
@@ -306,6 +325,7 @@ Get tenant details.
 **Authentication**: Required (SUPER_ADMIN or TENANT_ADMIN of the tenant)
 
 **Response** (200 OK):
+
 ```json
 {
   "id": "tenant-uuid",
@@ -323,6 +343,7 @@ Get tenant details.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/tenants/tenant-uuid \
   -H "Authorization: Bearer <token>"
@@ -337,6 +358,7 @@ Update tenant information.
 **Authentication**: Required (SUPER_ADMIN or TENANT_ADMIN of the tenant)
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "name": "New Tenant Name",
@@ -348,6 +370,7 @@ Update tenant information.
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "Tenant updated successfully",
@@ -365,6 +388,7 @@ Update tenant information.
 ```
 
 **Example**:
+
 ```bash
 curl -X PATCH http://localhost:5000/api/tenants/tenant-uuid \
   -H "Authorization: Bearer <token>" \
@@ -386,6 +410,7 @@ Delete a tenant (SUPER_ADMIN only).
 **Response** (204 No Content)
 
 **Example**:
+
 ```bash
 curl -X DELETE http://localhost:5000/api/tenants/tenant-uuid \
   -H "Authorization: Bearer <token>"
@@ -402,11 +427,13 @@ List users in current tenant.
 **Authentication**: Required
 
 **Query Parameters**:
+
 - `page` (integer): Page number (default: 1)
 - `limit` (integer): Items per page (default: 10)
 - `role` (string): Filter by role (SUPER_ADMIN, TENANT_ADMIN, USER)
 
 **Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -429,6 +456,7 @@ List users in current tenant.
 ```
 
 **Example**:
+
 ```bash
 curl "http://localhost:5000/api/users?page=1&limit=10" \
   -H "Authorization: Bearer <token>"
@@ -443,6 +471,7 @@ Create a new user (TENANT_ADMIN only).
 **Authentication**: Required (TENANT_ADMIN role)
 
 **Request Body**:
+
 ```json
 {
   "email": "newuser@example.com",
@@ -454,6 +483,7 @@ Create a new user (TENANT_ADMIN only).
 ```
 
 **Response** (201 Created):
+
 ```json
 {
   "message": "User created successfully",
@@ -470,6 +500,7 @@ Create a new user (TENANT_ADMIN only).
 ```
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/users \
   -H "Authorization: Bearer <token>" \
@@ -492,6 +523,7 @@ Get user details.
 **Authentication**: Required
 
 **Response** (200 OK):
+
 ```json
 {
   "id": "user-uuid",
@@ -506,6 +538,7 @@ Get user details.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/users/user-uuid \
   -H "Authorization: Bearer <token>"
@@ -520,6 +553,7 @@ Update user information (TENANT_ADMIN or self).
 **Authentication**: Required
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "firstName": "John",
@@ -529,6 +563,7 @@ Update user information (TENANT_ADMIN or self).
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "User updated successfully",
@@ -544,6 +579,7 @@ Update user information (TENANT_ADMIN or self).
 ```
 
 **Example**:
+
 ```bash
 curl -X PATCH http://localhost:5000/api/users/user-uuid \
   -H "Authorization: Bearer <token>" \
@@ -565,6 +601,7 @@ Delete a user (TENANT_ADMIN only).
 **Response** (204 No Content)
 
 **Example**:
+
 ```bash
 curl -X DELETE http://localhost:5000/api/users/user-uuid \
   -H "Authorization: Bearer <token>"
@@ -581,11 +618,13 @@ List projects in current tenant.
 **Authentication**: Required
 
 **Query Parameters**:
+
 - `page` (integer): Page number (default: 1)
 - `limit` (integer): Items per page (default: 10)
 - `status` (string): Filter by status
 
 **Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -608,6 +647,7 @@ List projects in current tenant.
 ```
 
 **Example**:
+
 ```bash
 curl "http://localhost:5000/api/projects?page=1&limit=10" \
   -H "Authorization: Bearer <token>"
@@ -622,6 +662,7 @@ Create a new project (TENANT_ADMIN only).
 **Authentication**: Required (TENANT_ADMIN role)
 
 **Request Body**:
+
 ```json
 {
   "name": "New Project",
@@ -631,6 +672,7 @@ Create a new project (TENANT_ADMIN only).
 ```
 
 **Response** (201 Created):
+
 ```json
 {
   "message": "Project created successfully",
@@ -646,6 +688,7 @@ Create a new project (TENANT_ADMIN only).
 ```
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/projects \
   -H "Authorization: Bearer <token>" \
@@ -666,6 +709,7 @@ Get project details.
 **Authentication**: Required
 
 **Response** (200 OK):
+
 ```json
 {
   "id": "project-uuid",
@@ -680,6 +724,7 @@ Get project details.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/projects/project-uuid \
   -H "Authorization: Bearer <token>"
@@ -694,6 +739,7 @@ Update project information (TENANT_ADMIN only).
 **Authentication**: Required (TENANT_ADMIN role)
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "name": "Updated Project Name",
@@ -703,6 +749,7 @@ Update project information (TENANT_ADMIN only).
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "Project updated successfully",
@@ -717,6 +764,7 @@ Update project information (TENANT_ADMIN only).
 ```
 
 **Example**:
+
 ```bash
 curl -X PATCH http://localhost:5000/api/projects/project-uuid \
   -H "Authorization: Bearer <token>" \
@@ -738,6 +786,7 @@ Delete a project (TENANT_ADMIN only).
 **Response** (204 No Content)
 
 **Example**:
+
 ```bash
 curl -X DELETE http://localhost:5000/api/projects/project-uuid \
   -H "Authorization: Bearer <token>"
@@ -754,6 +803,7 @@ List tasks in current tenant.
 **Authentication**: Required
 
 **Query Parameters**:
+
 - `page` (integer): Page number (default: 1)
 - `limit` (integer): Items per page (default: 10)
 - `projectId` (string): Filter by project
@@ -761,6 +811,7 @@ List tasks in current tenant.
 - `priority` (string): Filter by priority
 
 **Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -784,6 +835,7 @@ List tasks in current tenant.
 ```
 
 **Example**:
+
 ```bash
 curl "http://localhost:5000/api/tasks?status=IN_PROGRESS&priority=HIGH" \
   -H "Authorization: Bearer <token>"
@@ -798,6 +850,7 @@ Create a new task.
 **Authentication**: Required
 
 **Request Body**:
+
 ```json
 {
   "title": "Implement feature X",
@@ -810,6 +863,7 @@ Create a new task.
 ```
 
 **Response** (201 Created):
+
 ```json
 {
   "message": "Task created successfully",
@@ -827,6 +881,7 @@ Create a new task.
 ```
 
 **Example**:
+
 ```bash
 curl -X POST http://localhost:5000/api/tasks \
   -H "Authorization: Bearer <token>" \
@@ -850,6 +905,7 @@ Get task details.
 **Authentication**: Required
 
 **Response** (200 OK):
+
 ```json
 {
   "id": "task-uuid",
@@ -871,6 +927,7 @@ Get task details.
 ```
 
 **Example**:
+
 ```bash
 curl http://localhost:5000/api/tasks/task-uuid \
   -H "Authorization: Bearer <token>"
@@ -885,6 +942,7 @@ Update task information.
 **Authentication**: Required
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "title": "Updated title",
@@ -896,6 +954,7 @@ Update task information.
 ```
 
 **Response** (200 OK):
+
 ```json
 {
   "message": "Task updated successfully",
@@ -912,6 +971,7 @@ Update task information.
 ```
 
 **Example**:
+
 ```bash
 curl -X PATCH http://localhost:5000/api/tasks/task-uuid \
   -H "Authorization: Bearer <token>" \
@@ -933,6 +993,7 @@ Delete a task.
 **Response** (204 No Content)
 
 **Example**:
+
 ```bash
 curl -X DELETE http://localhost:5000/api/tasks/task-uuid \
   -H "Authorization: Bearer <token>"
@@ -955,6 +1016,7 @@ All list endpoints support pagination with `page` and `limit` query parameters.
 ## Filtering & Sorting
 
 Use query parameters to filter results:
+
 ```bash
 GET /api/users?role=USER&page=2&limit=20
 GET /api/tasks?status=COMPLETED&priority=HIGH
@@ -963,6 +1025,7 @@ GET /api/tasks?status=COMPLETED&priority=HIGH
 ## Response Timestamps
 
 All timestamps are in ISO 8601 format (UTC):
+
 ```
 2025-12-26T10:00:00.000Z
 ```

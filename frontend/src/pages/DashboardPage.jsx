@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { useNavigate, Link } from 'react-router-dom';
 import client from '../api/client.js';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ projects: 0, tasks: 0, completed: 0, pending: 0 });
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({ projects: 0, tasks: 0, completed: 0, pending: 0, tenants: 0, users: 0 });
   const [recentProjects, setRecentProjects] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,113 +15,245 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const projRes = await client.get(`/tenants/${user?.tenantId}/projects?limit=5`);
-        const projects = projRes.data.data.projects || [];
-        setRecentProjects(projects);
-
-        const tasksRes = await client.get(`/tenants/${user?.tenantId}/projects?limit=100`);
-        const allProjects = tasksRes.data.data.projects || [];
-        let allTasks = [];
-        for (const p of allProjects) {
+        // Super admin dashboard
+        if (user?.role === 'super_admin') {
           try {
-            const tr = await client.get(`/tenants/${user?.tenantId}/projects/${p.id}/tasks?limit=100`);
-            allTasks = allTasks.concat(tr.data.data.tasks || []);
-          } catch {}
-        }
+            const tenantsRes = await client.get('/admin/tenants?limit=5');
+            const tenants = tenantsRes.data?.data?.tenants || [];
+            
+            const usersRes = await client.get('/admin/users?limit=100');
+            const allUsers = usersRes.data?.data?.users || [];
+            
+            setStats({
+              projects: 0,
+              tasks: 0,
+              completed: 0,
+              pending: 0,
+              tenants: tenants.length,
+              users: allUsers.length,
+            });
+            setRecentProjects(tenants.slice(0, 5));
+            setMyTasks([]);
+          } catch (e) {
+            console.error('Error fetching super admin data:', e);
+            setError('Failed to load admin data');
+            setStats({
+              projects: 0,
+              tasks: 0,
+              completed: 0,
+              pending: 0,
+              tenants: 0,
+              users: 0,
+            });
+            setRecentProjects([]);
+            setMyTasks([]);
+          }
+        } else {
+          // Regular tenant user
+          try {
+            const projRes = await client.get(`/tenants/${user?.tenantId}/projects?limit=5`);
+            const projects = projRes.data?.data?.projects || [];
+            setRecentProjects(projects);
 
-        const myTasks = allTasks.filter((t) => t.assignedTo?.id === user?.id);
-        setMyTasks(myTasks.slice(0, 10));
-        setStats({
-          projects: allProjects.length,
-          tasks: allTasks.length,
-          completed: allTasks.filter((t) => t.status === 'completed').length,
-          pending: allTasks.filter((t) => t.status !== 'completed').length,
-        });
+            const tasksRes = await client.get(`/tenants/${user?.tenantId}/projects?limit=100`);
+            const allProjects = tasksRes.data?.data?.projects || [];
+            let allTasks = [];
+            for (const p of allProjects) {
+              try {
+                const tr = await client.get(`/tenants/${user?.tenantId}/projects/${p.id}/tasks?limit=100`);
+                allTasks = allTasks.concat(tr.data?.data?.tasks || []);
+              } catch (e) {
+                console.error('Error fetching tasks for project:', p.id, e);
+              }
+            }
+
+            const myTasks = allTasks.filter((t) => t.assignedTo?.id === user?.id);
+            setMyTasks(myTasks.slice(0, 10));
+            setStats({
+              projects: allProjects.length,
+              tasks: allTasks.length,
+              completed: allTasks.filter((t) => t.status === 'completed').length,
+              pending: allTasks.filter((t) => t.status !== 'completed').length,
+              tenants: 0,
+              users: 0,
+            });
+          } catch (e) {
+            console.error('Error fetching tenant data:', e);
+            setError('Failed to load projects');
+            setStats({
+              projects: 0,
+              tasks: 0,
+              completed: 0,
+              pending: 0,
+              tenants: 0,
+              users: 0,
+            });
+            setRecentProjects([]);
+            setMyTasks([]);
+          }
+        }
         setLoading(false);
       } catch (e) {
-        setError(e?.response?.data?.message || 'Failed to load dashboard');
+        console.error('Unexpected error in fetchData:', e);
+        setError('An unexpected error occurred');
         setLoading(false);
       }
     };
     fetchData();
   }, [user]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading">Loading your dashboard...</div>;
+
+  const isSuperAdmin = user?.role === 'super_admin';
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      {error && <div style={{ color: '#d00', marginBottom: 12 }}>{error}</div>}
+      <h1 className="mb-6">Dashboard</h1>
+      {error && <div className="error">{error}</div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 32 }}>
-        <StatCard label="Projects" value={stats.projects} />
-        <StatCard label="Tasks" value={stats.tasks} />
-        <StatCard label="Completed" value={stats.completed} />
-        <StatCard label="Pending" value={stats.pending} />
+      {/* Stats Grid */}
+      <div className="grid grid-4 mb-6">
+        <StatCard label="Projects" value={stats.projects} color="primary" />
+        <StatCard label="Tasks" value={stats.tasks} color="success" />
+        <StatCard label="Completed" value={stats.completed} color="warning" />
+        <StatCard label="Pending" value={stats.pending} color="danger" />
+        {isSuperAdmin && <StatCard label="Tenants" value={stats.tenants} color="primary" />}
+        {isSuperAdmin && <StatCard label="Users" value={stats.users} color="success" />}
       </div>
 
-      <h2>Recent Projects</h2>
+      {/* Recent Section */}
+      <h2 className="mb-4">{isSuperAdmin ? 'Recent Tenants' : 'Recent Projects'}</h2>
       {recentProjects.length === 0 ? (
-        <p style={{ color: '#999' }}>No projects yet. Create one to get started.</p>
+        <div className="card mb-6" style={{ padding: '3rem', textAlign: 'center' }}>
+          <p className="text-muted">
+            {isSuperAdmin ? 'No tenants yet.' : 'No projects yet. Create one to get started.'}
+          </p>
+        </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 12 }}>
-          {recentProjects.map((p) => (
-            <div key={p.id} style={{ border: '1px solid #ddd', padding: 12, borderRadius: 6 }}>
-              <h3 style={{ margin: '0 0 6px' }}>{p.name}</h3>
-              <p style={{ margin: '0 0 6px', fontSize: 12, color: '#666' }}>{p.description}</p>
-              <div style={{ fontSize: 12, color: '#666' }}>{p.taskCount || 0} tasks</div>
-              <div style={{ marginTop: 6, fontSize: 11, color: '#999' }}>Status: {p.status}</div>
-            </div>
-          ))}
+        <div className="grid grid-3 mb-6">
+          {recentProjects.map((item) =>
+            isSuperAdmin ? (
+              <div key={item.id} className="card" style={{ cursor: 'pointer' }} onClick={() => navigate(`/tenants`)}>
+                <h3 className="mb-2">{item.name}</h3>
+                <p className="text-muted text-small mb-3">{item.subdomain}</p>
+                <div className="flex" style={{ gap: '0.5rem', marginBottom: '1rem' }}>
+                  <span className="badge badge-success">{item.status}</span>
+                  <span className="badge badge-primary">{item.subscriptionPlan}</span>
+                </div>
+                <div className="text-small text-muted">
+                  <div>Users: {item.userCount || 0}</div>
+                  <div>Projects: {item.projectCount || 0}</div>
+                </div>
+              </div>
+            ) : (
+              <div
+                key={item.id}
+                className="card"
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate(`/projects/${item.id}`)}
+              >
+                <h3 className="mb-2">{item.name}</h3>
+                <p className="text-muted text-small mb-3">{item.description}</p>
+                <div className="flex" style={{ gap: '0.5rem', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="badge badge-info">{item.status}</span>
+                  <span className="text-small text-muted">{item.taskCount || 0} tasks</span>
+                </div>
+              </div>
+            )
+          )}
         </div>
       )}
 
-      <h2 style={{ marginTop: 32 }}>My Tasks</h2>
-      {myTasks.length === 0 ? (
-        <p style={{ color: '#999' }}>No tasks assigned to you.</p>
-      ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #ddd' }}>
-              <th style={{ textAlign: 'left', padding: 8 }}>Title</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Project</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Status</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Priority</th>
-              <th style={{ textAlign: 'left', padding: 8 }}>Due Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {myTasks.map((t) => (
-              <tr key={t.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}>{t.title}</td>
-                <td style={{ padding: 8 }}>Project</td>
-                <td style={{ padding: 8 }}><span style={statusBadge(t.status)}>{t.status}</span></td>
-                <td style={{ padding: 8 }}><span style={priorityBadge(t.priority)}>{t.priority}</span></td>
-                <td style={{ padding: 8 }}>{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* My Tasks */}
+      {!isSuperAdmin && (
+        <>
+          <h2 className="mb-4">My Tasks</h2>
+          {myTasks.length === 0 ? (
+            <div className="card" style={{ padding: '3rem', textAlign: 'center' }}>
+              <p className="text-muted">No tasks assigned to you.</p>
+            </div>
+          ) : (
+            <div className="card">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Project</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {myTasks.map((t) => (
+                    <tr key={t.id}>
+                      <td style={{ fontWeight: '500' }}>{t.title}</td>
+                      <td>
+                        <Link to={`/projects/${t.projectId}`} style={{ color: 'var(--primary)' }}>
+                          {t.projectName || 'Project'}
+                        </Link>
+                      </td>
+                      <td>
+                        <span className={`badge badge-${getStatusColor(t.status)}`}>{t.status}</span>
+                      </td>
+                      <td>
+                        <span className={`badge badge-${getPriorityColor(t.priority)}`}>
+                          {t.priority}
+                        </span>
+                      </td>
+                      <td>
+                        {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value, color = 'primary' }) {
+  const icons = {
+    primary: '📊',
+    success: '✅',
+    warning: '⚠️',
+    danger: '⏱️',
+  };
+
   return (
-    <div style={{ border: '1px solid #ddd', padding: 16, borderRadius: 6, textAlign: 'center' }}>
-      <div style={{ fontSize: 28, fontWeight: 700 }}>{value}</div>
-      <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{label}</div>
+    <div
+      className="card"
+      style={{
+        padding: '1.5rem',
+        textAlign: 'center',
+        border: '1px solid var(--border)',
+      }}
+    >
+      <div style={{ fontSize: '2rem', marginBottom: '0.5rem', opacity: 0.7 }}>{icons[color]}</div>
+      <div style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '0.5rem', color: 'var(--text)' }}>{value}</div>
+      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{label}</div>
     </div>
   );
 }
 
-function statusBadge(status) {
-  const colors = { todo: '#d0d0d0', in_progress: '#fff4a8', completed: '#a8ffa8' };
-  return { display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 12, background: colors[status] || '#f0f0f0' };
+function getStatusColor(status) {
+  const map = {
+    todo: 'info',
+    'in-progress': 'warning',
+    completed: 'success',
+  };
+  return map[status] || 'info';
 }
 
-function priorityBadge(priority) {
-  const colors = { low: '#d0d0d0', medium: '#fff4a8', high: '#ffa8a8' };
-  return { display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 12, background: colors[priority] || '#f0f0f0' };
+function getPriorityColor(priority) {
+  const map = {
+    low: 'info',
+    medium: 'warning',
+    high: 'danger',
+  };
+  return map[priority] || 'info';
 }
