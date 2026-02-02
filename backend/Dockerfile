@@ -20,8 +20,8 @@ RUN npx prisma generate
 # Expose port
 EXPOSE 5000
 
-# Create entrypoint script (without seed to avoid segfault)
-RUN printf '#!/bin/sh\nset -e\n\necho "Waiting for database to be ready..."\nsleep 5\n\necho "Running database migrations..."\nnpx prisma migrate deploy || true\n\necho "Starting application..."\nexec node src/server.js\n' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# Create entrypoint script with migrations and seed
+RUN printf '#!/bin/sh\nset -e\n\necho "Waiting for database to be ready..."\nsleep 5\n\necho "Running database migrations..."\nnpx prisma migrate deploy || true\n\necho "Seeding database..."\nnode prisma/seed.js || true\n\necho "Starting application..."\nexec node src/server.js\n' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Start application
 CMD ["/app/entrypoint.sh"]

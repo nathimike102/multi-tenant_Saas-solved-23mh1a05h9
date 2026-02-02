@@ -31,7 +31,7 @@ services:
       DATABASE_URL: postgresql://postgres:postgres_password_123@database:5432/saas_db
       JWT_SECRET: saas_jwt_secret_key_min_32_chars_long_2025
       FRONTEND_URL: http://localhost:3000
-      CORS_ORIGIN: http://localhost:3000
+      CORS_ORIGIN: http://localhost:3000,http://frontend:3000
       PORT: 5000
       LOG_LEVEL: info
       BCRYPT_ROUNDS: 10
