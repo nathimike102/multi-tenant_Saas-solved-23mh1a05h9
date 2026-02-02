@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { getToken, clearAuth } from '../auth/storage.js';
 
+const baseURL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL,
 });
 
 client.interceptors.request.use((config) => {

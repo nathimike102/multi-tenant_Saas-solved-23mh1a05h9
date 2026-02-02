@@ -17,7 +17,7 @@ const router = express.Router();
 router.use('/auth', authRoutes);
 router.use('/tenants', tenantRoutes);
 router.use('/tenants/:tenantId/users', userRoutes);
-router.use('/tenants/:tenantId', projectRoutes);
+router.use('/tenants/:tenantId/projects', projectRoutes);
 router.use('/tenants/:tenantId', taskRoutes);
 
 // Super admin endpoints for managing all resources across all tenants

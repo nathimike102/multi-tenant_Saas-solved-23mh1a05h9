@@ -4,6 +4,22 @@ import client from '../api/client.js';
 
 const AuthContext = createContext(null);
 
+function decodeJwt(token) {
+  try {
+    const payload = token.split('.')[1];
+    const base = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(
+      atob(base)
+        .split('')
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join('')
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(getToken());
   const [user, setUser] = useState(getUser());
@@ -15,6 +31,16 @@ export function AuthProvider({ children }) {
       if (!t) {
         setLoading(false);
         return;
+      }
+      const decoded = decodeJwt(t);
+      if (decoded) {
+        setUser((prev) => ({
+          ...prev,
+          id: decoded.userId,
+          email: decoded.email,
+          role: decoded.role,
+          tenantId: decoded.tenantId ?? null,
+        }));
       }
       try {
         const { data } = await client.get('/auth/me');

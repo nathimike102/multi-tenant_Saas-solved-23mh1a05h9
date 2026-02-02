@@ -6,6 +6,7 @@ import ProjectModal from '../components/ProjectModal.jsx';
 
 export default function ProjectsPage() {
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,6 +17,12 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
+      setError('');
+      if (isSuperAdmin) {
+        setProjects([]);
+        setError('Super administrators must select a tenant to manage projects.');
+        return;
+      }
       const res = await client.get(`/tenants/${user?.tenantId}/projects`, {
         params: { status: filterStatus, search, limit: 100 },
       });
@@ -32,6 +39,10 @@ export default function ProjectsPage() {
   }, [user, filterStatus, search]);
 
   const handleDelete = async (id) => {
+    if (isSuperAdmin) {
+      alert('Super administrators must select a tenant to manage projects.');
+      return;
+    }
     if (!confirm('Delete project?')) return;
     try {
       await client.delete(`/tenants/${user?.tenantId}/projects/${id}`);
@@ -42,6 +53,10 @@ export default function ProjectsPage() {
   };
 
   const handleSave = async (data) => {
+    if (isSuperAdmin) {
+      alert('Super administrators must select a tenant to manage projects.');
+      return;
+    }
     try {
       await client.post(`/tenants/${user?.tenantId}/projects`, data);
       setShowModal(false);
@@ -57,9 +72,11 @@ export default function ProjectsPage() {
     <div>
       <div className="flex-between mb-6">
         <h1>Projects</h1>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          + New Project
-        </button>
+        {!isSuperAdmin && (
+          <button onClick={() => setShowModal(true)} className="btn btn-primary">
+            + New Project
+          </button>
+        )}
       </div>
 
       {error && <div className="error">{error}</div>}
@@ -101,7 +118,7 @@ export default function ProjectsPage() {
                 <th>Status</th>
                 <th>Tasks</th>
                 <th>Created</th>
-                <th>Actions</th>
+                {!isSuperAdmin && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -119,14 +136,16 @@ export default function ProjectsPage() {
                   </td>
                   <td>{p.taskCount || 0}</td>
                   <td className="text-small text-muted">{new Date(p.createdAt).toLocaleDateString()}</td>
-                  <td>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      className="btn btn-danger btn-small"
-                    >
-                      Delete
-                    </button>
-                  </td>
+                  {!isSuperAdmin && (
+                    <td>
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="btn btn-danger btn-small"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

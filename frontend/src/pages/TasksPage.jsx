@@ -5,6 +5,7 @@ import AccessDenied from '../components/AccessDenied.jsx';
 
 export default function TasksPage() {
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,9 +23,10 @@ export default function TasksPage() {
       setError('');
       
       // For super_admin, get all tasks; otherwise get tenant tasks
-      if (user?.role === 'super_admin') {
-        // Placeholder - would need admin endpoint for all tasks
+      if (isSuperAdmin) {
         setTasks([]);
+        setError('Super administrators must select a tenant to view tasks.');
+        return;
       } else {
         // Get all projects first, then their tasks
         const projRes = await client.get(`/tenants/${user?.tenantId}/projects?limit=100`);

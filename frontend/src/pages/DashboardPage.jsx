@@ -17,37 +17,42 @@ export default function DashboardPage() {
       try {
         // Super admin dashboard
         if (user?.role === 'super_admin') {
+          let tenantsData = [];
+          let usersData = [];
+
+          // Fetch tenants with 5 second timeout
           try {
-            const tenantsRes = await client.get('/admin/tenants?limit=5');
-            const tenants = tenantsRes.data?.data?.tenants || [];
-            
-            const usersRes = await client.get('/admin/users?limit=100');
-            const allUsers = usersRes.data?.data?.users || [];
-            
-            setStats({
-              projects: 0,
-              tasks: 0,
-              completed: 0,
-              pending: 0,
-              tenants: tenants.length,
-              users: allUsers.length,
-            });
-            setRecentProjects(tenants.slice(0, 5));
-            setMyTasks([]);
+            const tenantsRes = await Promise.race([
+              client.get('/admin/tenants?limit=5'),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+            ]);
+            tenantsData = tenantsRes.data?.data?.tenants || [];
           } catch (e) {
-            console.error('Error fetching super admin data:', e);
-            setError('Failed to load admin data');
-            setStats({
-              projects: 0,
-              tasks: 0,
-              completed: 0,
-              pending: 0,
-              tenants: 0,
-              users: 0,
-            });
-            setRecentProjects([]);
-            setMyTasks([]);
+            console.warn('Timeout or error fetching tenants:', e.message);
           }
+
+          // Fetch users with 5 second timeout
+          try {
+            const usersRes = await Promise.race([
+              client.get('/admin/users?limit=100'),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+            ]);
+            usersData = usersRes.data?.data?.users || [];
+          } catch (e) {
+            console.warn('Timeout or error fetching users:', e.message);
+          }
+
+          setStats({
+            projects: 0,
+            tasks: 0,
+            completed: 0,
+            pending: 0,
+            tenants: tenantsData.length,
+            users: usersData.length,
+          });
+          setRecentProjects(tenantsData.slice(0, 5));
+          setMyTasks([]);
+          setError('');
         } else {
           // Regular tenant user
           try {

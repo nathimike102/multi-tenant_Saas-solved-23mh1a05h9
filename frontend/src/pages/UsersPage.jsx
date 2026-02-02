@@ -6,6 +6,7 @@ import AccessDenied from '../components/AccessDenied.jsx';
 
 export default function UsersPage() {
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -20,7 +21,8 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await client.get(`/tenants/${user?.tenantId}/users`, {
+      const endpoint = isSuperAdmin ? '/admin/users' : `/tenants/${user?.tenantId}/users`;
+      const res = await client.get(endpoint, {
         params: { search, limit: 100 },
       });
       setUsers(res.data?.data?.users || []);
@@ -36,6 +38,10 @@ export default function UsersPage() {
   }, [user, search]);
 
   const handleDelete = async (userId) => {
+    if (isSuperAdmin) {
+      alert('Super administrators cannot remove users from this view.');
+      return;
+    }
     if (!confirm('Remove user from tenant?')) return;
     try {
       await client.delete(`/tenants/${user?.tenantId}/users/${userId}`);
@@ -46,6 +52,10 @@ export default function UsersPage() {
   };
 
   const handleSave = async (data) => {
+    if (isSuperAdmin) {
+      alert('Super administrators cannot invite users from this view.');
+      return;
+    }
     try {
       await client.post(`/tenants/${user?.tenantId}/users`, data);
       setShowModal(false);
@@ -61,9 +71,11 @@ export default function UsersPage() {
     <div>
       <div className="flex-between mb-6">
         <h1>Users</h1>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          + Invite User
-        </button>
+        {!isSuperAdmin && (
+          <button onClick={() => setShowModal(true)} className="btn btn-primary">
+            + Invite User
+          </button>
+        )}
       </div>
 
       {error && <div className="error">{error}</div>}
@@ -90,7 +102,7 @@ export default function UsersPage() {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
-                <th>Actions</th>
+                {!isSuperAdmin && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -106,11 +118,13 @@ export default function UsersPage() {
                       {u.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td>
-                    <button onClick={() => handleDelete(u.id)} className="btn btn-danger btn-small">
-                      Remove
-                    </button>
-                  </td>
+                  {!isSuperAdmin && (
+                    <td>
+                      <button onClick={() => handleDelete(u.id)} className="btn btn-danger btn-small">
+                        Remove
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

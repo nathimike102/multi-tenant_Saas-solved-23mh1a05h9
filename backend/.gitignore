@@ -34,3 +34,4 @@ prisma/.env
 
 my_progress.md
 .vercel
+.env*.local

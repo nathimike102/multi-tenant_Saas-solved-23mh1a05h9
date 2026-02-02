@@ -14,11 +14,16 @@ const apiRoutes = require('./routes');
 const app = express();
 
 // Middleware setup - CORS with environment variable
-const corsOrigin = process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:5173'];
-app.use(cors({
+const corsOrigin = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : (process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:5173']);
+
+const corsOptions = {
   origin: corsOrigin,
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,6 +55,29 @@ app.get('/api/health', async (req, res) => {
 // Legacy health endpoint for compatibility
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Root endpoint - API information
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Nathi Multi-Tenant SaaS API',
+    version: '1.0.0',
+    status: 'online',
+    endpoints: {
+      health: '/api/health',
+      auth: {
+        login: 'POST /api/auth/login',
+        register: 'POST /api/auth/register',
+        refresh: 'POST /api/auth/refresh'
+      },
+      tenants: 'GET /api/tenants (super_admin only)',
+      projects: 'GET /api/projects',
+      tasks: 'GET /api/tasks',
+      users: 'GET /api/users'
+    },
+    documentation: 'https://github.com/your-repo/docs'
+  });
 });
 
 // API routes
