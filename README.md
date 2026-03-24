@@ -100,8 +100,8 @@ A modern SaaS platform designed to enable organizations to manage their operatio
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
-   cd nathi-saas
+   git clone git@github.com:nathimike102/multi-tenant_Saas-solved-23mh1a05h9.git
+   cd multi-tenant_Saas-solved-23mh1a05h9
    ```
 
 2. **Setup Backend**
@@ -197,7 +197,7 @@ docker-compose logs       # View logs
 ## 📝 Project Structure
 
 ```
-nathi-saas/
+multi-tenant_Saas-solved-23mh1a05h9/
 ├── backend/                  # Express API
 │   ├── src/
 │   │   ├── controllers/     # Request handlers
